@@ -1,0 +1,10 @@
+---
+- name: Change hostname
+  # TODO use variables!
+  # TODO consider making this a role or a command
+  # Has to be done with a raw command because there are no good modules to do
+  # this. The sed inplace is crucial because sudo tries to resolve the local
+  # hostname, and will take forever (i.e. over 12s) to run if it can't resolve;
+  # which will in turn crash ansible because it will wait for an elevated
+  # prompt too long (timeout defined as the SSH timeout in ansible.cfg)
+  raw: sudo sed -i 's/127\.0\.1\.1.*/127\.0\.1\.1\tmainframe/g' /etc/hosts && sudo hostnamectl set-hostname mainframe

@@ -8,16 +8,18 @@
     - name: Install python for Ansible
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       changed_when: false
+    - include: hostname.yml
     - setup:
+
 
   roles:
     - coaxial.base
 
   tasks:
-  - include: refresh_apt_cache.yml
-  - include: file_server.yml
-  - include: vm_host.yml
+    - include: refresh_apt_cache.yml
+    - include: file_server.yml
+    - include: vm_host.yml
 
   handlers:
-  - include: file_server_handlers.yml
-  - include: vm_host_handlers.yml
+    - include: file_server_handlers.yml
+    - include: vm_host_handlers.yml
