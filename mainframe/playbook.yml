@@ -15,6 +15,7 @@
 
   roles:
     - coaxial.base
+    - angstwad.docker_ubuntu
 
   tasks:
     - include: refresh_apt_cache.yml
