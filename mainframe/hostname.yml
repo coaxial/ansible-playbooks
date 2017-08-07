@@ -7,4 +7,7 @@
   # hostname, and will take forever (i.e. over 12s) to run if it can't resolve;
   # which will in turn crash ansible because it will wait for an elevated
   # prompt too long (timeout defined as the SSH timeout in ansible.cfg)
-  raw: sudo sed -i 's/127\.0\.1\.1.*/127\.0\.1\.1\tmainframe/g' /etc/hosts && sudo hostnamectl set-hostname mainframe
+  # outputting a message when hostname modified for changed_when
+  raw: grep -q mainframe /etc/hosts || (sudo sed -i 's/127\.0\.1\.1.*/127\.0\.1\.1\tmainframe/g' /etc/hosts && sudo hostnamectl set-hostname mainframe && printf 'hostname updated')
+  register: change_hostname
+  changed_when: change_hostname.stdout == 'hostname updated'
