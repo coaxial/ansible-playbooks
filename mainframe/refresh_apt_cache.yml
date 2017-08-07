@@ -1,0 +1,5 @@
+---
+- name: Refresh apt cache
+  apt:
+    update_cache: true
+    cache_valid_time: 216000 # 1 day

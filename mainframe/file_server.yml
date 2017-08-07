@@ -1,0 +1,14 @@
+---
+- name: Install nfs
+  package:
+    name: nfs-kernel-server
+    state: latest
+  notify:
+    - configure exports
+    - open firewall ports
+    - restart nfs server
+
+- name: Install ufw
+  package:
+    name: ufw
+    state: latest

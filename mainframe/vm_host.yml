@@ -1,0 +1,18 @@
+---
+# Using https://help.ubuntu.com/community/KVM/Installation
+
+- name: Install virtualization packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - qemu-kvm
+    - libvirt-bin
+  notify:
+    - reload kvm kernel module
+
+- name: Add ansible user to libvirt group
+  user:
+    name: ansible
+    append: yes
+    groups: libvirtd
