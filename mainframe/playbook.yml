@@ -1,0 +1,55 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+
+  # bootstrap python2
+  pre_tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      changed_when: false
+    - setup:
+
+  roles:
+    - coaxial.base
+
+  tasks:
+    - name: Refresh apt cache
+      apt:
+        update_cache: true
+        cache_valid_time: 216000 # 1 day
+
+    - name: Install nfs
+      package:
+        name: nfs-kernel-server
+        state: latest
+
+    - name: Configure exports
+      template:
+        src: templates/exports.j2
+        dest: /etc/exports
+        mode: 0644
+        owner: root
+        group: root
+      notify:
+        - restart nfs server
+
+    - name: Install ufw
+      package:
+        name: ufw
+        state: latest
+
+    - name: Open firewall ports
+      ufw:
+        from_ip: "{{ ansible_default_ipv4.network }}/24"
+        from_port: 2049
+        policy: allow
+        proto: tcp
+        state: reloaded
+
+  handlers:
+    - name: restart nfs server
+      service:
+        name: nfs-kernel-server
+        state: restarted
+
