@@ -4,4 +4,4 @@
 
 Playbook | Purpose
 --- | ---
-[base](base/) | Base configuration for (almost) any new box
+[base](mainframe/) | Configure `mainframe`
