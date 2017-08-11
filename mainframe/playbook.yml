@@ -23,5 +23,4 @@
     - include: vm_host.yml
 
   handlers:
-    - include: file_server_handlers.yml
     - include: vm_host_handlers.yml

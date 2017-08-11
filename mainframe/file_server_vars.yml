@@ -1,0 +1,5 @@
+---
+# for more nfs services, cf https://wiki.debian.org/SecuringNFS
+ports:
+  mountd: 32767
+  nlockmgr: 32768

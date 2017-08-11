@@ -1,14 +1,63 @@
 ---
-- name: Install nfs
+- name: Load vars
+  include_vars:
+    file: file_server_vars.yml
+
+- name: Install nfs server
   package:
     name: nfs-kernel-server
     state: latest
-  notify:
-    - configure exports
-    - open firewall ports
-    - restart nfs server
 
-- name: Install ufw
-  package:
-    name: ufw
-    state: latest
+- name: Configure exports
+  template:
+    src: templates/exports.j2
+    dest: /etc/exports
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Use static ports for NFS services
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - src: templates/nfs-kernel-server.j2
+      dest: /etc/default/nfs-kernel-server
+    - src: templates/nfs-static-ports.conf.j2
+      dest: /etc/sysctl.d/60-nfs-static-ports.conf
+  register: nfs_ports
+
+- name: Reboot server
+  # so mountd is on the right port
+  shell: sleep 2 && reboot
+  # cf https://superuser.com/a/1106350/509068
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: nfs_ports.changed
+
+- name: Wait for server to come back online
+  when: nfs_ports.changed
+  local_action:
+    module: wait_for
+    host: "{{ ansible_default_ipv4.address }}"
+    state: started
+    port: 22
+    search_regex: OpenSSH
+    delay: 15
+  become: false
+
+- name: Open firewall ports
+  ufw:
+    rule: allow
+    from_ip: "{{ ansible_default_ipv4.network }}/24"
+    to_port: "{{ item }}"
+    proto: any
+  with_items:
+    - 111
+    - 2049
+    - "{{ ports.mountd }}"
+    - "{{ ports.nlockmgr }}"
