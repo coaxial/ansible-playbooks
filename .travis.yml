@@ -13,10 +13,14 @@ services:
 
 before_install:
   - 'docker pull geerlingguy/docker-${distro}-ansible:latest'
+  - 'echo ${ANSIBLE_VAULT_PASSWORD} > "${PWD}"/.vault_pass'
+  - 'mv "${PWD}/restore-vm/vm_list.yml.example" "${PWD}/restore-vm/vm_list.yml"'
+  - 'touch "${PWD}/restore-vm/dummy_{1,2}.{xml,img}"'
 
 script:
   - container_id=$(mktemp)
   - 'docker run --detach --volume=/home/travis/.ssh:/home/root/.ssh:ro --volume="${PWD}":/etc/ansible/playbooks/:ro ${run_opts} geerlingguy/docker-${distro}-ansible:latest "${init}" > "${container_id}"'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-galaxy install -r /etc/ansible/playbooks/mainframe/requirements.yml'
   # verify syntax
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/mainframe/playbook.yml --syntax-check'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ANSIBLE_VAULT_PASSWORD_FILE=/etc/ansible/playbooks/.vault_pass ansible-playbook /etc/ansible/playbooks/mainframe/playbook.yml --syntax-check'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/restore-vm/playbook.yml --syntax-check'

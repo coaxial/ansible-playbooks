@@ -2,6 +2,6 @@
 
 ## Index
 
-Playbook | Purpose
+Playbook | Purpose | Notes
 --- | ---
-[base](mainframe/) | Configure `mainframe`
+[base](mainframe/) | Configure `mainframe` | Usually requires these options: `-k`, `-K`, `--ask-vault-pass`, requirements in `requirements.yml`

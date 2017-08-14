@@ -1,0 +1,13 @@
+---
+vms:
+  - name: my_vm
+    files:
+      xml: dummy_1.xml
+      disk: dummy_1.img
+    disk_type: img
+
+  - name: another_vm
+    files:
+      xml: dummy_1.xml
+      disk: dummy_1.img
+    disk_type: img

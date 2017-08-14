@@ -1,2 +1,4 @@
 *.retry
 .vagrant
+restore-vm/vm_list.yml
+.vault_pass

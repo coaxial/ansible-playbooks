@@ -8,11 +8,43 @@
   with_items:
     - qemu-kvm
     - libvirt-bin
-  notify:
-    - reload kvm kernel module
+    - python-libvirt
 
-- name: Add ansible user to libvirt group
+- name: Add ansible & operator to libvirt group
   user:
-    name: ansible
+    name: "{{ item }}"
     append: yes
     groups: libvirtd
+  with_items:
+    - "{{ base__operator_user.username }}"
+    - "{{ base__provisioning_user.username }}"
+
+- name: Setup bridge
+  template:
+    src: templates/interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_default_ipv4.alias != 'br0'
+  register: br0_setup
+
+- name: Reboot host
+  # so br0 gets an IP
+  shell: sleep 2 && reboot
+  # cf https://superuser.com/a/1106350/509068
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: br0_setup.changed
+
+- name: Wait for server to come back online
+  when: br0_setup.changed
+  local_action:
+    module: wait_for
+    host: "{{ ansible_default_ipv4.address }}"
+    state: started
+    port: 22
+    search_regex: OpenSSH
+    delay: 15
+  become: false

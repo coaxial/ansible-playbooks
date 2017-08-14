@@ -1,8 +1,0 @@
----
-- name: reload kvm kernel module
-  modprobe:
-    name: kvm
-    state: "{{ item }}"
-  with_items:
-    - absent
-    - present

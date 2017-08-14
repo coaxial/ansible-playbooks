@@ -1,0 +1,59 @@
+---
+- hosts: all
+  become: true
+  vars:
+    # defines where disk images and definitions are kept on the target host
+    vms_location: /media/storage/vms
+  vars_files:
+    - vm_list.yml
+
+  tasks:
+    - name: Make sure kvm-qemu is installed
+      command: virsh list --all
+      register: virsh_output
+
+    # Bail if kvm-qemu isn't there or isn't working
+    - assert:
+        that:
+          "'Id' in virsh_output.stdout"
+        msg: kvm-qemu must be up and running for this playbook to work
+
+    - name: Copy VMs configs
+      copy:
+        src: "{{ item.files.xml }}"
+        dest: "{{ vms_location }}/{{ item.name }}.xml"
+        mode: 0644
+      with_items:
+        - "{{ vms }}"
+
+    - name: Copy VMs disks
+      copy:
+        src: "{{ item.files.disk }}"
+        dest: "{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}"
+        mode: 0644
+      with_items:
+        - "{{ vms }}"
+
+    - name: Edit XML to match disk location on host
+      replace:
+        regexp: "<source file='(?!{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}).*'/>"
+        replace: "<source file='{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}'/>"
+        path: "{{ vms_location }}/{{ item.name }}.xml"
+      with_items:
+        - "{{ vms }}"
+
+    - name: Create VMs
+      virt:
+        name: "{{ item.name }}"
+        command:  define
+        xml: "{{ vms_location }}/{{ item.name }}.xml"
+      with_items:
+        - "{{ vms }}"
+
+    - name: Start VMs
+      virt:
+        name: "{{ item.name }}"
+        state: running
+        autostart: "{{ item.autostart }}"
+      with_items:
+        - "{{ vms }}"

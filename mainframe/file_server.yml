@@ -8,6 +8,20 @@
     name: nfs-kernel-server
     state: latest
 
+- name: Create mount point for storage partition
+  file:
+    state: directory
+    path: /media/storage
+  when: ansible_devices.sdb is defined
+
+- name: Mount storage partition
+  lineinfile:
+    path: /etc/fstab
+    regexp: '^UUID={{ ansible_devices.sdb.partitions.sdb3.uuid }}'
+    line: 'UUID={{ ansible_devices.sdb.partitions.sdb3.uuid }}  /media/storage  auto  defaults  0 0'
+    validate: 'mount -a'
+  when: ansible_devices.sdb is defined
+
 - name: Configure exports
   template:
     src: templates/exports.j2
