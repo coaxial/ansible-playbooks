@@ -5,6 +5,7 @@ vms:
       xml: dummy_1.xml
       disk: dummy_1.img
     disk_type: img
+    autostart: true
 
   - name: another_vm
     files:

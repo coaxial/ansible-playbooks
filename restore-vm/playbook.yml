@@ -15,14 +15,20 @@
     # Bail if kvm-qemu isn't there or isn't working
     - assert:
         that:
-          "'Id' in virsh_output.stdout"
+          - "'Id' in virsh_output.stdout"
         msg: kvm-qemu must be up and running for this playbook to work
 
-    - name: Copy VMs configs
-      copy:
-        src: "{{ item.files.xml }}"
-        dest: "{{ vms_location }}/{{ item.name }}.xml"
-        mode: 0644
+    - name: Ensure VMs dir exists
+      file:
+        path: "{{vms_location }}"
+        state: directory
+
+    - name: Edit XML to match disk location on host
+      replace:
+        regexp: "<source file='(?!{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}).*'/>"
+        replace: "<source file='{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}'/>"
+        path: "{{ item.files.xml }}"
+      delegate_to: localhost # change these files locally
       with_items:
         - "{{ vms }}"
 
@@ -34,19 +40,13 @@
       with_items:
         - "{{ vms }}"
 
-    - name: Edit XML to match disk location on host
-      replace:
-        regexp: "<source file='(?!{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}).*'/>"
-        replace: "<source file='{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}'/>"
-        path: "{{ vms_location }}/{{ item.name }}.xml"
-      with_items:
-        - "{{ vms }}"
-
     - name: Create VMs
       virt:
         name: "{{ item.name }}"
         command:  define
-        xml: "{{ vms_location }}/{{ item.name }}.xml"
+        # the xml argument expects actual XML, not a path to an XML file...
+        xml: "{{ lookup('file', '{{ item.files.xml }}') }}"
+        autostart: "{{ item.autostart | default('true') }}"
       with_items:
         - "{{ vms }}"
 
@@ -54,6 +54,5 @@
       virt:
         name: "{{ item.name }}"
         state: running
-        autostart: "{{ item.autostart }}"
       with_items:
         - "{{ vms }}"
