@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install mosh
+      package:
+        name: mosh
+        state: latest
+
+    - name: Open firewall ports for mosh
+      ufw:
+        rule: allow
+        port: '60000:60015'
+        proto: udp
