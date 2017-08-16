@@ -13,3 +13,16 @@
         rule: allow
         port: '60000:60015'
         proto: udp
+
+    - name: Install tmux
+      package:
+        name: tmux
+        state: latest
+
+    - name: Configure tmux
+      copy:
+        src: files/tmux.conf
+        dest: /home/user/.tmux.conf
+        owner: user
+        group: user
+        mode: 0644
