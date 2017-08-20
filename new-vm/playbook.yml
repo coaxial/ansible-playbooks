@@ -1,0 +1,109 @@
+---
+- hosts: vm-hosts
+  become: true
+  vars_files:
+    - vars.yml
+  vars_prompt:
+    - name: "vm_name"
+      prompt: "New VM name?"
+      private: false
+
+    - name: "memory"
+      prompt: "Amount of RAM in MB?"
+      default: 1024
+      private: false
+
+    - name: "max_memory"
+      prompt: "Burst amount of RAM in MB?"
+      default: 1536
+      private: false
+
+    - name: "cores"
+      prompt: "Amount of CPU cores?"
+      default: 2
+      private: false
+
+    - name: "autostart"
+      prompt: "Autostart VM?"
+      default: true
+      private: false
+
+  tasks:
+    - name: Install required packages
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - libguestfs-tools
+
+    - name: Check new VM name
+      fail:
+        msg: "VM name can't be empty"
+      when: "vm_name == ''"
+
+    - name: List remote VMs
+      virt:
+        command: list_vms
+      register: vms_list
+
+    - name: Check if VM already exists
+      fail:
+        msg: "VM `{{ vm_name }}' already exists on target, can't proceed"
+      when: "vm_name in vms_list"
+
+    - name: Copy base disk file
+      synchronize:
+        src: "{{ local_base_disk_dir }}/{{ vm_disk_template }}"
+        dest: "{{ remote_base_disk_dir }}/{{ vm_disk_template }}"
+      register: disk_img
+
+    - name: Set permissions on base disk file
+      file:
+        src: "{{ local_base_disk_dir }}/{{ vm_disk_template }}"
+        dest: "{{ remote_base_disk_dir }}/{{ vm_disk_template }}"
+        mode: 0644
+        owner: libvirt-qemu
+        group: kvm
+      when: disk_img.changed
+
+    - name: Create Base Ubuntu VM
+      virt:
+        command: define
+        name: "{{ vm_base_name }}"
+        xml:  "{{ lookup('template', 'templates/{{ vm_base_name }}.xml.j2') }}"
+      when: "vm_base_name not in vms_list"
+
+    - name: Create new VM
+      # Easiest way to derive a new VM from a template, with a new UUID etc.
+      # cf. https://linux.die.net/man/1/virt-clone
+      command: "virt-clone --original={{ vm_base_name }} --name={{ vm_name }} --auto-clone"
+
+    - name: Modify VM's hardware definition
+      shell: "virsh setmaxmem {{ vm_name }} {{ max_memory }}M --config && virsh setmem {{ vm_name }} {{ memory }}M --config && virsh setvcpus {{ vm_name }} {{ cores }} --config"
+
+    - name: Set autostart
+      shell: "virsh autostart {{ vm_name }}"
+      when: autostart == true
+
+    - name: Start new VM
+      virt:
+        command: start
+        name: "{{ vm_name }}"
+
+    - name: Set permissions on disk file
+      # Do this after the VM is started because starting it with the virt
+      # module resets permissions to 0600 for some reason
+      file:
+        path: "{{ remote_base_disk_dir }}/{{ vm_disk_template }}"
+        mode: 0644
+        owner: libvirt-qemu
+        group: kvm
+
+    - name: Find out VM's MAC
+      # No way to find out IP for now, MAC address can help look it up in the
+      # DHCP leases list on the router
+      shell: 'virsh domiflist {{ vm_name }} | grep --only-matching --extended-regexp [0-9a-f]{2}\:.*'
+      register: vm_mac
+
+    - debug:
+        msg: "{{ vm_name }}'s MAC address is {{ vm_mac.stdout }}"

@@ -24,3 +24,4 @@ script:
   # verify syntax
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ANSIBLE_VAULT_PASSWORD_FILE=/etc/ansible/playbooks/.vault_pass ansible-playbook /etc/ansible/playbooks/mainframe/playbook.yml --syntax-check'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/restore-vm/playbook.yml --syntax-check'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/new-vm/playbook.yml --syntax-check'

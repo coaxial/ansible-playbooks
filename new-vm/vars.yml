@@ -1,0 +1,5 @@
+---
+vm_base_name: ubuntu-16.04_base
+vm_disk_template: "{{ vm_base_name }}.qcow2"
+local_base_disk_dir: ../../base-vms
+remote_base_disk_dir: /media/storage/vms
