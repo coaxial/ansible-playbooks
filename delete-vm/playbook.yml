@@ -1,0 +1,46 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: List VMs
+      virt:
+        command: list_vms
+      register: virt
+
+    - debug:
+        msg: "These are the VMs on the remote host: {{ virt.list_vms | join(', ') }}"
+
+    - pause:
+        prompt: "Enter the name for the VM to delete. Note: input won't echo, press <Enter> when done"
+      register: vm_name_prompt
+
+    - pause:
+        prompt: "/!\\ `{{ vm_name_prompt.user_input }}` is going to be permanently deleted. <Enter> to confirm, <ctrl-c> then <a> to cancel /!\\"
+
+    - name: Get disk file location
+      virt:
+        command: get_xml
+        name: "{{ vm_name_prompt.user_input }}"
+      register: vm_xml
+
+    - debug:
+        msg: "{{ vm_xml }}"
+
+    - name: Destroy VM
+      virt:
+        command: destroy
+        name: "{{ vm_name_prompt.user_input }}"
+      ignore_errors: true
+
+    - name: Undefine VM
+      virt:
+        command: undefine
+        name: "{{ vm_name_prompt.user_input }}"
+
+    - name: Delete disk file
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ (vm_xml.get_xml | regex_findall(\"source file='(.*)'\")) }}"
