@@ -1,4 +1,4 @@
-# New VM
+# Create VM
 
 Launch a new Ubuntu 16.04 VM on the target host. The VMs are all created after
 a template that is cloned to change the relevant things (network MAC, UUID,
