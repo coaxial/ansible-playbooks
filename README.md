@@ -6,8 +6,8 @@ other Ubuntu versions or other distributions.
 ## Index
 
 Playbook | Purpose | Notes
---- | ---
+--- | --- | --
 [mainframe](mainframe/) | Configure `mainframe` | Usually requires these options: `-k`, `-K`, `--ask-vault-pass`, requirements in `requirements.yml`
-[restore-vm](restore-vm/) | Migrate VMs from another host
-[create-vm](create-vm/) | Launch new, pre-prepared VMs
-[delete-vm](delete-vm/) | Delete an existing VM and its disk files
+[restore-vm](restore-vm/) | Migrate VMs from another host | 
+[create-vm](create-vm/) | Launch new, pre-prepared VMs | 
+[delete-vm](delete-vm/) | Delete an existing VM and its disk files | 
