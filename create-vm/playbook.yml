@@ -85,6 +85,15 @@
       shell: "virsh autostart {{ vm_name }}"
       when: autostart == true
 
+    - name: Get path to disk file
+      virt:
+        command: get_xml
+        name: "{{ vm_name }}"
+      register: vm_xml
+
+    - name: Set hostname
+      shell: "virt-sysprep --operations -all,customize --hostname {{ vm_name }} -a {{ (vm_xml.get_xml | regex_findall(\"source file='(.*)'\"))[0] }}"
+
     - name: Start new VM
       virt:
         command: start
@@ -106,4 +115,4 @@
       register: vm_mac
 
     - debug:
-        msg: "{{ vm_name }}'s MAC address is {{ vm_mac.stdout }}"
+        msg: "{{ vm_name }}'s MAC address is {{ vm_mac.stdout }}, hostname is `{{ vm_name }}`"
