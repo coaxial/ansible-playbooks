@@ -1,0 +1,6 @@
+[program:mayan-uwsgi]
+command = {{ venv }}/bin/uwsgi --ini {{ venv }}/uwsgi.ini
+user = root
+autostart = true
+autorestart = true
+redirect_stderr = true

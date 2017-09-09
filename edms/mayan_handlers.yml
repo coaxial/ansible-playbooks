@@ -1,0 +1,12 @@
+---
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+    enabled: true
+
+- name: restart supervisor
+  service:
+    name: supervisor
+    state: restarted
+    enabled: true

@@ -1,0 +1,14 @@
+[uwsgi]
+chdir = {{ mayan_install_dir }}/mayan
+chmod-socket = 664
+chown-socket = www-data:www-data
+env = DJANGO_SETTINGS_MODULE=mayan.settings.production
+gid = www-data
+logto = {{ uswgi_log_dir }}/%n.log
+pythonpath = {{ mayan_install_dir }}
+master = True
+max-requests = 5000
+socket = {{ venv }}/uwsgi.sock
+uid = www-data
+vacuum = True
+wsgi-file = {{ mayan_install_dir }}/mayan/wsgi.py

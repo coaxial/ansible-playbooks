@@ -1,0 +1,56 @@
+---
+- hosts: edms
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  vars:
+    upgrade: false
+
+  tasks:
+    - pause:
+        prompt: '/!\ This playbook will drop the current database, any data not backed up will be lost (<enter> to continue, <ctrl-c><a> to abort) /!\'
+
+    - name: Stop application
+      service:
+        name: supervisor
+        state: stopped
+
+    - name: List backups
+      become: true
+      shell: 'tarsnap --list-archives | sort | tail -n 1'
+      register: latest_backup_name
+      changed_when: false
+
+    - name: Extract files from latest backup
+      become: true
+      command: "tarsnap -xf {{ latest_backup_name.stdout }} -C /"
+
+    - name: Set permissions on database dump
+      file:
+        path: /tmp/mayan.sql
+        mode: 0600
+        owner: postgres
+        group: postgres
+
+    - name: Drop current database
+      become_user: postgres
+      command: 'dropdb mayan'
+
+    - name: Recreate database
+      become_user: postgres
+      command: 'createdb mayan -O mayan'
+
+    - name: Restore database
+      become_user: postgres
+      shell: 'psql mayan < /tmp/mayan.sql'
+
+    - name: Upgrade database
+      become: yes
+      shell: ". {{ venv }}/bin/activate && mayan-edms.py performupgrade"
+      when: upgrade
+
+    - name: Restart application
+      service:
+        name: supervisor
+        state: started

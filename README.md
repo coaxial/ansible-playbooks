@@ -11,3 +11,4 @@ Playbook | Purpose | Notes
 [restore-vm](restore-vm/) | Migrate VMs from another host | 
 [create-vm](create-vm/) | Launch new, pre-prepared VMs | 
 [delete-vm](delete-vm/) | Delete an existing VM and its disk files | 
+[edms](edms/) | Setup and restore Mayan EDMS |

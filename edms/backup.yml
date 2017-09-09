@@ -1,0 +1,80 @@
+---
+- name: Add tarsnap apt key
+  apt_key:
+    url: https://pkg.tarsnap.com/tarsnap-deb-packaging-key.asc
+    state: present
+    id: "{{ tarsnap__apt_key }}"
+
+- name: Add tarsnap apt repo
+  apt_repository:
+    repo: "deb http://pkg.tarsnap.com/deb/{{ ansible_distribution_release }} ./"
+    filename: tarsnap.list
+    state: present
+
+- name: Install tarsnap
+  package:
+    name: tarsnap
+    state: latest
+
+- name: Copy tarsnap configuration file
+  template:
+    src: templates/tarsnap.conf.j2
+    dest: /etc/tarsnap.conf
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Install pexpect module globally
+  # required by the expect module
+  pip:
+    name: pexpect
+    state: latest
+
+- name: Generate tarsnap key and register host
+  expect:
+    command: tarsnap-keygen --keyfile {{ tarsnap__keyfile }} --user {{ tarsnap__username }} --machine {{ ansible_hostname }}
+    responses:
+      password: "{{ tarsnap__password }}"
+    creates: "{{ tarsnap__keyfile }}"
+  notify:
+    - collect tarsnap key
+    - print tarsnap key
+  register: tarsnap_keygen
+
+- name: Set permissions on Tarsnap key
+  file:
+    path: "{{ tarsnap__keyfile }}"
+    mode: 0600
+    owner: root
+    group: root
+
+- name: Restore tarsnap cache
+  become: true
+  command: 'tarsnap --fsck'
+  when: tarsnap_keygen.changed
+
+- name: Install tarsnapper
+  pip:
+    name: tarsnapper
+    state: latest
+  register: install_tarsnapper
+
+- name: Copy tarsnapper config file
+  template:
+    src: templates/tarsnapper.yml.j2
+    dest: "{{ tarsnap__tarsnapper_config_file }}"
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Get path to tarsnapper command
+  command: 'which tarsnapper'
+  register: tarsnapper_full_path
+  when: install_tarsnapper.changed
+
+- name: Add backup task to cron
+  cron:
+    name: Backup to tarsnap
+    job: "{{ tarsnapper_full_path.stdout }} -c {{ tarsnap__tarsnapper_config_file }} make >> /var/log/tarsnapper.log 2>&1"
+    hour: 3
+    minute: 28

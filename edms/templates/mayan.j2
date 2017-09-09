@@ -1,0 +1,22 @@
+server {
+    listen 80;
+    server_name localhost;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:{{ venv }}/uwsgi.sock;
+
+        client_max_body_size 30M;
+        proxy_read_timeout 30s;
+    }
+
+    location /static {
+        alias {{ venv }}/mayan/media/static;
+        expires 1h;
+    }
+
+    location /favicon.ico {
+        alias {{ venv }}/mayan/media/static/appearance/images/favicon.ico;
+        expires 1h;
+    }
+}

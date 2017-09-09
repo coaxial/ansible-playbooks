@@ -1,0 +1,26 @@
+[program:mayan-worker]
+command = {{ venv }}/bin/python {{ venv }}/bin/mayan-edms.py celery --settings=mayan.settings.production worker -Ofair -l ERROR
+directory = {{ venv }}
+user = www-data
+stdout_logfile = {{ mayan_log_dir }}/worker-stdout.log
+stderr_logfile = {{ mayan_log_dir }}/worker-stderr.log
+autostart = true
+autorestart = true
+startsecs = 10
+stopwaitsecs = 10
+killasgroup = true
+priority = 998
+
+[program:mayan-beat]
+command = {{ venv }}/bin/python {{ venv }}/bin/mayan-edms.py celery --settings=mayan.settings.production beat -l ERROR
+directory = {{ venv }}
+user = www-data
+numprocs = 1
+stdout_logfile = {{ mayan_log_dir }}/beat-stdout.log
+stderr_logfile = {{ mayan_log_dir }}/beat-stderr.log
+autostart = true
+autorestart = true
+startsecs = 10
+stopwaitsecs = 1
+killasgroup = true
+priority = 998

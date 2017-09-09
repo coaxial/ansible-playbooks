@@ -1,0 +1,16 @@
+# Global values, valid for all jobs unless overridden:
+deltas: 1d 7d 30d
+delta-names:
+  default: 1d 7d 30d 360d
+target: $name-$date
+dateformat: "%Y-%m-%d_%H-%M-%S"
+
+jobs:
+  mayan-edms:
+    sources:
+      - /tmp/mayan.sql
+      - {{ venv }}/mayan/media/document_storage
+      - {{ venv }}/mayan/settings
+    exec_before: sudo -u postgres pg_dump mayan > /tmp/mayan.sql
+    exec_after: rm /tmp/mayan.sql
+    delta: default
