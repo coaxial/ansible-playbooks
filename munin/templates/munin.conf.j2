@@ -1,0 +1,9 @@
+dbdir       {{ munin_dbdir }}
+htmldir     {{ munin_htmldir }}
+includedir  /etc/munin/munin-conf.d
+logdir      {{ munin_logdir }}
+rundir      {{ munin_rundir }}
+tmpldir     {{ munin_tmpldir }}
+[{{ hostname }}]
+  address 127.0.0.1
+  use_node_name yes

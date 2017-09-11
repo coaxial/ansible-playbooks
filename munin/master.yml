@@ -1,0 +1,94 @@
+---
+- hosts: monitoring-master
+  become: true
+  vars:
+    hostname: munin-master
+    munin_dbdir: /var/lib/munin
+    munin_htmldir: /var/www/munin
+    munin_logdir: /var/log/munin
+    munin_rundir: /var/run/munin
+    munin_tmpldir: /etc/munin/templates
+  roles:
+    - coaxial.base
+  tasks:
+    - include: hostname.yml
+
+    - name: Install apache and modules
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - apache2
+        - apache2-utils
+        - libcgi-fast-perl
+        - libapache2-mod-fcgid
+
+    - name: Make sure fcgid module is enabled
+      apache2_module:
+        name: fcgid
+        state:  present
+
+    - name: Install munin
+      package:
+        name: munin
+        state: present
+
+    - name: Configure munin
+      template:
+        src: templates/munin.conf.j2
+        dest: /etc/munin/munin.conf
+        mode: 0600
+        owner: munin
+        group: munin
+      notify: restart munin-node
+
+    - name: Create directories
+      file:
+        state: directory
+        path: "{{ item }}"
+        mode: 0755
+        owner: munin
+        group: munin
+      with_items:
+        - "{{ munin_dbdir }}"
+        - "{{ munin_htmldir }}"
+        - "{{ munin_logdir }}"
+        - "{{ munin_rundir }}"
+        - "{{ munin_tmpldir }}"
+
+    - name: Configure apache
+      template:
+        src: templates/apache24.conf.j2
+        dest: /etc/munin/apache24.conf
+        mode: 0644
+        owner: munin
+        group: munin
+      notify: restart apache
+
+    - name: Open http port
+      ufw:
+        rule: allow
+        port: www
+
+    - name: Add cron job to update data
+      cron:
+        name: Update munin data
+        minute: 5
+        job: "sudo -u munin /usr/bin/munin-cron"
+
+    - name: Initial data update
+      become_user: munin
+      command: "/usr/bin/munin-cron"
+      args:
+        creates: "{{ munin_htmldir }}/index.html"
+
+  handlers:
+    - name: restart munin-node
+      service:
+        name: munin-node
+        state: restarted
+
+    - name: restart apache
+      service:
+        name: apache2
+        state: restarted
