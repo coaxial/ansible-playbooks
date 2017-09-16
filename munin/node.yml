@@ -1,0 +1,82 @@
+- hosts: munin-nodes
+  become: true
+  tasks:
+    - name: Install munin node
+      package:
+        name: munin-node
+        state: present
+
+    - name: Enable and start munin node daemon
+      service:
+        name: munin-node
+        enabled: true
+        state: started
+
+    - name: Create config file
+      command: touch /etc/munin/munin.conf
+      args:
+        creates: /etc/munin/munin.conf
+
+    - name: Configure ip_ plugin
+      blockinfile:
+        path: /etc/munin/munin.conf
+        block: |
+          [ip_*]
+            user root
+        state: present
+
+    - name: Enable ip_ plugin
+      file:
+        src: /usr/share/munin/plugins/ip_
+        dest: "/etc/munin/plugins/ip_{{ ansible_default_ipv4.address }}"
+        state: link
+
+    - name: Install Net::CIDR
+      # allows CIDR notation in munin-node config file
+      package:
+        name: libregexp-common-net-cidr-perl
+        state: present
+
+    - name: Get munin master ipv4
+      setup:
+      delegate_to: "{{ groups['monitoring-master'][0] }}"
+      delegate_facts: true
+
+    - name: Assign ipv4 to variable
+      set_fact:
+        munin_master_ipv4: "{{ hostvars[groups['monitoring-master'].0].ansible_default_ipv4.address }}"
+
+    - name: Allow connections from master
+      blockinfile:
+        path: /etc/munin/munin-node.conf
+        block: |
+          cidr_allow 127.0.0.1/32
+          cidr_allow {{ munin_master_ipv4 }}/32
+        state: present
+      notify: restart munin-node
+
+    - name: Add nodes to master
+      blockinfile:
+        path: /etc/munin/munin.conf
+        block: |
+          [{{ hostvars[item].ansible_hostname }}]
+            address {{ hostvars[item].ansible_default_ipv4.address }}
+            use_node_name yes
+        # marks need to be different to not be overwritten in the loop. MAC
+        # address should be unique
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostvars[item].ansible_default_ipv4.macaddress }}"
+      delegate_to: "{{ munin_master_ipv4 }}"
+      with_items: "{{ groups['munin-nodes'] }}"
+
+    - name: Open firewall ports
+      ufw:
+        port: 4949
+        rule: allow
+        proto: tcp
+        from_ip: "{{ munin_master_ipv4 }}"
+
+  handlers:
+    - name: restart munin-node
+      service:
+        name: munin-node
+        state: restarted

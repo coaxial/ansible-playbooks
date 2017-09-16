@@ -32,3 +32,4 @@ script:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ANSIBLE_VAULT_PASSWORD_FILE=/etc/ansible/playbooks/edms/.vault_pass ansible-playbook /etc/ansible/playbooks/edms/playbook.yml --syntax-check'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ANSIBLE_VAULT_PASSWORD_FILE=/etc/ansible/playbooks/edms/.vault_pass ansible-playbook /etc/ansible/playbooks/edms/restore-backup.yml --syntax-check'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/munin/master.yml --syntax-check'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/munin/node.yml --syntax-check'
