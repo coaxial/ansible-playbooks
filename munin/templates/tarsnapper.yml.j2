@@ -1,0 +1,14 @@
+# Global values, valid for all jobs unless overridden:
+deltas: 1d 7d 30d
+delta-names:
+  default: 1d 7d 30d 360d
+target: $name-$date
+dateformat: "%Y-%m-%d_%H-%M-%S"
+
+jobs:
+  munin-master:
+    sources:
+      - {{ munin_dbdir }}/**/*.rrd
+    exec_before: touch {{ munin_backuplockfile }}
+    exec_after: rm {{ munin_backuplockfile }}
+    delta: default

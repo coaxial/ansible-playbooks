@@ -8,8 +8,12 @@
     munin_logdir: /var/log/munin
     munin_rundir: /var/run/munin
     munin_tmpldir: /etc/munin/templates
+    munin_backuplockfile: /tmp/munin_backup.lock
+  vars_files:
+    - master_vars.yml
   roles:
     - coaxial.base
+    - coaxial.backup
   tasks:
     - include: hostname.yml
 
@@ -74,7 +78,7 @@
       cron:
         name: Update munin data
         minute: 5
-        job: "sudo -u munin /usr/bin/munin-cron"
+        job: "[[ ! -f {{ munin_backuplockfile }} ]] && sudo -u munin /usr/bin/munin-cron"
 
     - name: Initial data update
       become: yes
