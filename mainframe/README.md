@@ -11,6 +11,5 @@
 # Install roles dependencies
 ansible-galaxy install -r requirements.yml -f
 # Run playbook
-ansible-playbook -i <machine's ip>, playbook.yml --ask-pass --ask-sudo-pass
---ask-vault-pass [--remote-user=<unprivileged username>]
+ansible-playbook -i <machine's ip>, playbook.yml --ask-pass --ask-sudo-pass --ask-vault-pass [--remote-user=<unprivileged username>]
 ```
