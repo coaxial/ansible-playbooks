@@ -19,7 +19,7 @@
     path: /etc/fstab
     regexp: '^UUID={{ ansible_devices.sdb.partitions.sdb3.uuid }}'
     line: 'UUID={{ ansible_devices.sdb.partitions.sdb3.uuid }}  /media/storage  auto  defaults  0 0'
-    validate: 'mount -a'
+    validate: 'mount -a %s'
   when: ansible_devices.sdb is defined
 
 - name: Configure exports

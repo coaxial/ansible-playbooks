@@ -14,7 +14,7 @@
   user:
     name: "{{ item }}"
     append: yes
-    groups: libvirtd
+    groups: libvirt
   with_items:
     - "{{ base__operator_user.username }}"
     - "{{ base__provisioning_user.username }}"
