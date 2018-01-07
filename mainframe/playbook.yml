@@ -21,5 +21,8 @@
 
   tasks:
     - include: refresh_apt_cache.yml
+    # Waiting for https://github.com/ansible/ansible/issues/34546 to be
+    # resolved
+    # - include: ip.yml
     - include: file_server.yml
     - include: vm_host.yml

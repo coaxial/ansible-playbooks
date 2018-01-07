@@ -1,0 +1,20 @@
+---
+
+- name: Install IP configuration packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - network-manager
+    - dbus
+    - python-gi
+    - libnm-glib-dev
+
+- name: Configure network interface
+  nmcli:
+    conn_name: "{{ ansible_default_ipv4.interface }}"
+    type: ethernet
+    dns4: "{{ ip__dns4 }}"
+    gw4: "{{ ip__gw4 }}"
+    ip4: "{{ ip__ip4 }}"
+    state: present

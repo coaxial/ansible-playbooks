@@ -1,0 +1,19 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    {{ ansible_default_ipv4.interface }}:
+      dhcp4: no
+  bridges:
+    br0:
+      interfaces: [{{ ansible_default_ipv4.interface }}]
+      dhcp4: no
+      addresses: [{{ ip__ip4 }}/24]
+      gateway4: {{ ip__gw4 }}
+      nameservers:
+        search: [lan]
+{# filters to avoid python adding `u`, #}
+{# cf.  https://stackoverflow.com/a/41521816/2774883 #}
+        addresses: {{ ip__dns4|list|ipv4 }}
+      parameters:
+        stp: yes

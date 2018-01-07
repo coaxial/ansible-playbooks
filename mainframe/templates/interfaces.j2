@@ -1,6 +1,8 @@
 auto lo
 iface lo inet loopback
 auto br0
-iface br0 inet dhcp
+iface br0 inet static
   bridge_ports {{ ansible_default_ipv4.alias }}
   bridge_stp on
+  address {{ ip__ip4 }}/24
+  gateway {{ ip__gw4 }}
