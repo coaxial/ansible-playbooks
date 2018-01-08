@@ -4,13 +4,18 @@
   vars:
     # defines where disk images and definitions are kept on the target host
     vms_location: /media/storage/vms
+    # if set to false, it will skip transferring the disk images. this
+    # drastically speeds up the playbook run and is useful if the disk images
+    # are already in place
+    copy_disks: true
   vars_files:
     - vm_list.yml
 
   tasks:
-    - name: Make sure kvm-qemu is installed
+    - name: Make sure kvm-qemu is working
       command: virsh list --all
       register: virsh_output
+      changed_when: false
 
     # Bail if kvm-qemu isn't there or isn't working
     - assert:
@@ -32,27 +37,29 @@
       with_items:
         - "{{ vms }}"
 
-    - name: Copy VMs disks
+    - name: Copy disk files
       copy:
         src: "{{ item.files.disk }}"
         dest: "{{ vms_location }}/{{ item.name }}.{{ item.disk_type }}"
         mode: 0644
       with_items:
         - "{{ vms }}"
+      when: copy_disks
 
-    - name: Create VMs
+    # this doesn't work, cf. https://github.com/ansible/ansible/issues/34559
+    - name: Create domains
       virt:
         name: "{{ item.name }}"
         command:  define
         # the xml argument expects actual XML, not a path to an XML file...
         xml: "{{ lookup('file', '{{ item.files.xml }}') }}"
-        autostart: "{{ item.autostart | default('true') }}"
       with_items:
         - "{{ vms }}"
 
-    - name: Start VMs
+    - name: Start domains
       virt:
         name: "{{ item.name }}"
         state: running
+        autostart: "{{ item.autostart | default('true') }}"
       with_items:
         - "{{ vms }}"
