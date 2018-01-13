@@ -4,3 +4,4 @@ restore-vm/vm_list.yml
 .vault_pass
 *.key
 inventory.ini
+add-ip/vars.yml

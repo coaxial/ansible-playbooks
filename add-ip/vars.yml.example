@@ -1,0 +1,6 @@
+---
+addip__ipv4: '10.0.0.100/24'
+addip__after: 'nameservers:'
+addip__before: 'br0:'
+addip__hostname: 'myhostname'
+addip__inventory_file: '/etc/ansible/inventory.ini'
