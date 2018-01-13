@@ -26,3 +26,9 @@ line1 # this is the addip__before
 line2 # this is the target
 line3 # this is the addip__after
 ```
+
+## Note
+
+It will not add the IP if it is already present, but only if the new IP is the
+last entry in the addresses array. A backup `01-netcfg.yaml` file is generated
+upon editing in case the playbook mangles anything.

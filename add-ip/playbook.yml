@@ -9,6 +9,7 @@
     - name: Add extra IP (netplan)
       replace:
         path: /etc/netplan/01-netcfg.yaml
+        # will still replace if the IP to add isn't the last one in the array
         regexp: "^(\\s+addresses: \\[)(.*(?<!{{ addip__ipv4 | regex_escape() }}))(\\])$"
         replace: '\1\2, {{ addip__ipv4 }}\3'
         after: '{{ addip__after }}'
