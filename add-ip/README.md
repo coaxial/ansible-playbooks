@@ -3,9 +3,9 @@
 Adds the IP defined in vars.yml to the target host. Only works with netplan for
 now.
 
-It will also add a new entry to your inventory file.
+It will also add a new entry to your inventory file and updated the DNS server.
 
-Updating the DNS assumes the DNS server is a Linux machine that can run ansible
+Updating the DNS server assumes it is a Linux machine that can run ansible
 commands (pihole on a raspberry pi for instance)
 
 ## Usage
@@ -22,7 +22,7 @@ commands (pihole on a raspberry pi for instance)
 
 [0]: this is confusing so here is an example:
 ```
-line1 # this will be the addip__before
+line1 # this is the addip__before
 line2 # this is the target
-line3 # this will be the addip__after
+line3 # this is the addip__after
 ```
