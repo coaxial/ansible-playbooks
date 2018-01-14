@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: coaxial
+  description: Deploy a Docker service to a host
+  license: MIT
+
+  min_ansible_version: 1.2
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+
+  galaxy_tags:
+    - docker
+    - docker-compose
+
+dependencies: []

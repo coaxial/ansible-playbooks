@@ -12,3 +12,4 @@ Playbook | Purpose | Notes
 [create-vm](create-vm/) | Launch new, pre-prepared VMs |
 [delete-vm](delete-vm/) | Delete an existing VM and its disk files |
 [edms](edms/) | Setup and restore Mayan EDMS |
+[deploy-docker-service](deploy-docker-service/) | Deploy a docker service from a local directory | Requires a `docker-compose.yml` file

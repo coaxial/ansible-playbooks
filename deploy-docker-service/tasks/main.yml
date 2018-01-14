@@ -1,0 +1,40 @@
+- name: Set destination directory name as fact (local)
+  set_fact:
+    dest_path: "/opt/{{ rds__src_path | basename | lower | regex_replace('\\s, -') }}"
+  when: rds__src_path is defined
+
+- name: Set destination directory name as fact (git)
+  set_fact:
+    dest_path: "/opt/{{ rds__src_repo | regex_search('([\\w\\d\\-]+)\\.git') | regex_replace('\\.git', '') }}"
+  when: rds__src_repo is defined
+
+- name: Copy project files over (local)
+  copy:
+    src: "{{ rds__src_path }}"
+    dest: /opt
+    force: true
+    owner: root
+    group: root
+    mode: 0644
+  when: rds__src_path is defined
+  register: copy_files
+
+- name: Clone repo (git)
+  git:
+    repo: "{{ rds__src_repo }}"
+    dest: "{{ dest_path }}"
+    version: "{{ rds__src_repo_version | default('HEAD') }}"
+  when: rds__src_repo is defined
+  register: git_clone
+
+- name: Stop services if running
+  docker_service:
+    project_src: "{{ dest_path }}"
+    stopped: true
+  ignore_errors: true  # will fail if first deploy/not running
+  when: copy_files.changed or git_clone.changed
+
+- name: Start service
+  docker_service:
+    project_src: "{{ dest_path }}"
+    state: present

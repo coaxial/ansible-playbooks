@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: true
+  vars:
+    rds__src_repo: https://github.com/coaxial/docker-downloader.git
+    rds__src_repo_version: deploy
+    downloader__media_path: /media/storage/nas
+    downloader__scratch_path: /media/scratch/downloader
+
+  pre_tasks:
+    - name: Ensure required directories exist for the docker volumes
+      file:
+        src: "{{ item.src }}"  # symlink
+        dest: "{{ item.dest }}"  # where the symlink points to
+        state: link
+      with_items:
+        - src: "{{ downloader__media_path }}/TV"
+          dest: /srv/tv_shows
+        - src: "{{ downloader__media_path }}/Movies"
+          dest: /srv/movies
+        - src: "{{ downloader__scratch_path }}"
+          dest: /srv/downloads
+
+  roles:
+    - ../deploy-docker-service
