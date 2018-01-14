@@ -7,7 +7,20 @@ Deploy a docker service using `docker-compose`
 Make any edits necessary to the `docker-compose.yml` (ports, address binding,
 etc.), set your vars (either `rds__src_path` or `rds__src_repo`), then run:
 
-`docker-playbook all --limit <myhost> playbook.yml`
+```yaml
+---
+- hosts: all
+  vars:
+    rds__src_repo: https://github.com/user/my-service.git
+    rds__src_repo_version: deploy
+
+  pre_tasks:
+    - name: Ensure everything is in place
+    ...
+
+  roles:
+    - ../deploy-docker-service
+```
 
 ## Variables
 
