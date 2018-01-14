@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Add extra IP (netplan)
+      replace:
+        path: /etc/netplan/01-netcfg.yaml
+        # will still replace if the IP to add isn't the last one in the array
+        regexp: "^(\\s+addresses: \\[)(.*(?<!{{ addip__ipv4 | regex_escape() }}))(\\])$"
+        replace: '\1\2, {{ addip__ipv4 }}\3'
+        after: '{{ addip__after }}'
+        before: '{{ addip__before }}'
+        backup: true
+      register: netplan
+
+    - name: Apply changes
+      shell: 'netplan apply'
+      when: netplan.changed
+
+    - name: Add new IP to DNS server
+      delegate_to: dns
+      lineinfile:
+        line: "{{ addip__ipv4 | ipaddr('address') }}\t{{ addip__hostname }}"
+        path: /etc/hosts
+        state: present
+      register: dns_db
+
+    - name: Reload DNS server
+      delegate_to: dns
+      command: 'pihole restartdns'
+      when: dns_db.changed
+
+    - name: Add host to inventory
+      delegate_to: localhost
+      connection: local
+      lineinfile:
+        insertbefore: BOF
+        line: "{{ addip__hostname }}\tansible_host={{ addip__ipv4 | ipaddr('address') }}"
+        path: '{{ addip__inventory_file }}'
+        state: present
