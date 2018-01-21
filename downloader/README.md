@@ -12,3 +12,14 @@ of the volumes.
 `downloader__scratch_path`: Physical device on which to store, extract,
 and repair the downloads (ideally a different drive than the storage drive)
 `downloader__media_path`: Physical device on which to store the files
+`downloader__tarsnap_key_path`: Path to the tarsnap key for backing up
+`downloader__tarsnap_key_dest`: Where to place the tarsnap key on the remote
+host
+
+## Files
+
+A tarsnap key is required, place it in `files/tarsnap.key`
+
+## Run
+
+`$ ansible-playbooks --limit <host> playbook.yml`
