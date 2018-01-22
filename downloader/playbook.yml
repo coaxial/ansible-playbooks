@@ -6,6 +6,8 @@
     rds__src_repo_version: deploy
     downloader__media_path: /media/storage/nas
     downloader__scratch_path: /media/scratch/downloader
+    downloader__tarsnap_key_path: ./files/tarsnap.key
+    downloader__tarsnap_key_dest: /opt/docker-downloader/files/
 
   pre_tasks:
     - name: Ensure required directories exist for the docker volumes
@@ -23,3 +25,12 @@
 
   roles:
     - ../deploy-docker-service
+
+  post_tasks:
+    - name: Copy tarsnap key over
+      copy:
+        src: "{{ downloader__tarsnap_key_path }}"
+        dest: "{{ downloader__tarsnap_key_dest }}"
+        owner: root
+        group: root
+        mode: 0600
