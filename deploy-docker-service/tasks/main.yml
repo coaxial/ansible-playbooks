@@ -38,4 +38,6 @@
   docker_service:
     project_src: "{{ dest_path }}"
     pull: true
+    build: true
+    nocache: true
     state: present
