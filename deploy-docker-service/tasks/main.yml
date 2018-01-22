@@ -37,4 +37,5 @@
 - name: Start service
   docker_service:
     project_src: "{{ dest_path }}"
+    pull: true
     state: present
