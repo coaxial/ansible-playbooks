@@ -1,0 +1,8 @@
+---
+- name: start_service
+  docker_service:
+    project_src: "{{ dest_path }}"
+    pull: true
+    build: "{{ rds__build | default('true') }}"
+    nocache: true
+    state: present

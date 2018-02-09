@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  vars:
+    rds__src_repo: https://github.com/coaxial/docker-unifi.git
+    rds__src_repo_version: master
+    rds__build: false
+    unifi__tarsnap_key_path: ./files/tarsnap.key
+    unifi__tarsnap_key_dest: /opt/docker-unifi/files/tarsnap.key
+
+  roles:
+    - ../deploy-docker-service
+
+  tasks:
+    - name: Copy tarsnap key over
+      copy:
+        src: "{{ unifi__tarsnap_key_path }}"
+        dest: "{{ unifi__tarsnap_key_dest }}"
+        owner: root
+        group: root
+        mode: 0600
