@@ -17,7 +17,11 @@
     group: root
     mode: 0644
   when: rds__src_path is defined
-  register: copy_files
+  # start service at end of play so that service specific tasks can be
+  # performed (eg. copy the tarsnap key in place so that it's available when the
+  # backup service starts)
+  notify:
+    - "start_service"
 
 - name: Clone repo (git)
   git:
@@ -25,19 +29,8 @@
     dest: "{{ dest_path }}"
     version: "{{ rds__src_repo_version | default('HEAD') }}"
   when: rds__src_repo is defined
-  register: git_clone
-
-- name: Stop services if running
-  docker_service:
-    project_src: "{{ dest_path }}"
-    stopped: true
-  ignore_errors: true  # will fail if first deploy/not running
-  when: copy_files.changed or git_clone.changed
-
-- name: Start service
-  docker_service:
-    project_src: "{{ dest_path }}"
-    pull: true
-    build: true
-    nocache: true
-    state: present
+  # start service at end of play so that service specific tasks can be
+  # performed (eg. copy the tarsnap key in place so that it's available when the
+  # backup service starts)
+  notify:
+    - "start_service"
