@@ -5,4 +5,5 @@
     pull: true
     build: "{{ rds__build | default('true') }}"
     nocache: true
+    restarted: true
     state: present
