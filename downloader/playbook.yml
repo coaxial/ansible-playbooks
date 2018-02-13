@@ -34,3 +34,12 @@
         owner: root
         group: root
         mode: 0600
+
+    # nginx returns 502 for some services if it isn't destroyed and rebuilt
+    - name: Destroy and rebuild proxy container
+      docker_service:
+        services:
+          - proxy
+        recreate: always
+        state: present
+      when: rds__files_copied.changed or rds__git_clone.changed

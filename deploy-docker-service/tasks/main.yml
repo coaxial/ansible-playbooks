@@ -17,6 +17,7 @@
     group: root
     mode: 0644
   when: rds__src_path is defined
+  register: rds__files_copied
   # start service at end of play so that service specific tasks can be
   # performed (eg. copy the tarsnap key in place so that it's available when the
   # backup service starts)
@@ -29,6 +30,7 @@
     dest: "{{ dest_path }}"
     version: "{{ rds__src_repo_version | default('HEAD') }}"
   when: rds__src_repo is defined
+  register: rds__git_clone
   # start service at end of play so that service specific tasks can be
   # performed (eg. copy the tarsnap key in place so that it's available when the
   # backup service starts)
