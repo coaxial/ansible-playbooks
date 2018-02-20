@@ -38,6 +38,7 @@
     # nginx returns 502 for some services if it isn't destroyed and rebuilt
     - name: Destroy and rebuild proxy container
       docker_service:
+        project_src: "{{ dest_path }}"
         services:
           - proxy
         recreate: always
