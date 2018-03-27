@@ -43,4 +43,4 @@
           - proxy
         recreate: always
         state: present
-        when: rds__files_copied.changed or rds__git_clone.changed
+      when: rds__files_copied.changed or rds__git_clone.changed
