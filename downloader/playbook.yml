@@ -23,6 +23,11 @@
         - src: "{{ downloader__scratch_path }}"
           dest: /srv/downloads
 
+    - name: Copy env file
+      copy:
+        src: files/subtitles.env
+        dest: /opt/docker-downloader/subtitles.env
+
   roles:
     - ../deploy-docker-service
 
