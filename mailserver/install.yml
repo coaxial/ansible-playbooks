@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  # because there is no python2 yet
+  gather_facts: false
+  vars_files:
+    - vars.yml
+
+  # bootstrap python2
+  pre_tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      register: bootstrap_python
+      changed_when: bootstrap_python.stdout != ''
+    - include: hostname.yml
+    - setup:
+
+  roles:
+    - coaxial.base
+    - angstwad.docker_ubuntu
+    - coaxial.mailcow
