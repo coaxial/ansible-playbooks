@@ -1,0 +1,36 @@
+---
+- name: Clone borgmatic docker repo
+  git:
+    repo: 'https://github.com/coaxial/docker-borgmatic'
+    update: true
+    dest: /opt/docker-borgmatic
+    version: setup
+
+- name: Create borgmatic directory
+  file:
+    path: /opt/docker-borgmatic/borgmatic
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
+- name: Copy ssh and borg keys, borgmatic config file
+  copy:
+    src: "files/{{ item }}"
+    dest: "/opt/docker-borgmatic/{{ item }}"
+    mode: 0400
+    owner: root
+    group: root
+  with_items:
+    - borgmatic/backup_rsa
+    - borgmatic/backup_rsa.pub
+    - borgmatic/config.yaml
+    - borgmatic/passphrase
+    - borgmatic/.jobber
+
+- name: Start borgmatic container
+  docker_service:
+    project_src: /opt/docker-borgmatic
+    pull: true
+    build: true
+    state: present

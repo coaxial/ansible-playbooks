@@ -5,6 +5,12 @@
   gather_facts: false
   vars_files:
     - vars.yml
+  vars:
+    # required by the docker role, cf.
+    # https://github.com/geerlingguy/ansible-role-docker/blob/master/README.md
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
 
   # bootstrap python2
   pre_tasks:
@@ -12,10 +18,10 @@
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       register: bootstrap_python
       changed_when: bootstrap_python.stdout != ''
-    - include: hostname.yml
     - setup:
 
   roles:
     - coaxial.base
-    - angstwad.docker_ubuntu
-    - coaxial.mailcow
+    - geerlingguy.pip
+    - geerlingguy.docker
+    - ../../ansible-role-mailcow
