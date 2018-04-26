@@ -1,6 +1,0 @@
----
-- name: Synchronize time
-  copy:
-    src: files/timesyncd.conf
-    dest: /etc/systemd/timesyncd.conf
-    mode: 0644
