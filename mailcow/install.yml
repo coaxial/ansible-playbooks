@@ -1,8 +1,0 @@
----
-- hosts: all
-  become: true
-
-  roles:
-    - coaxial.base
-    - angstwad.docker_ubuntu
-    - ../mailcow-role
