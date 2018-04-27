@@ -24,4 +24,4 @@
     - coaxial.base
     - geerlingguy.pip
     - geerlingguy.docker
-    - ../../ansible-role-mailcow
+    - coaxial.ansible-role-mailcow
