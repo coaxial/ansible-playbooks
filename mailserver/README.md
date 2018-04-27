@@ -23,7 +23,7 @@ Leverages the https://github.com/coaxial/ansible-role-mailcow Ansible role, see 
 ## Files
 
 Filename | Purpose | Note
---- | ---
+---|---|---
 `borgmatic/borg_ssh_key{,.pub}` | ssh keys for connecting to the remote borg repo | cf. https://github.com/coaxial/ansible-role-mailcow for customisation options
 `borgmatic/passphrase` | remote borg repo passphrase
 `borgmatic/known_hosts` | ssh keys for remote borg repos | cf. https://github.com/coaxial/ansible-role-mailcow for details
