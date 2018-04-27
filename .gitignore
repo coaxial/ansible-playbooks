@@ -5,4 +5,3 @@ restore-vm/vm_list.yml
 *.key
 inventory.ini
 downloader/files/subtitles.env
-mailcow.conf
