@@ -1,6 +1,6 @@
 # mailserver playbook
 
-This playbook will deploy a mailcow email server and back up using [borg](https://borgbackup.readthedocs.io/en/stable/).
+This playbook will deploy a mailcow email server and hourly backups using [borg](https://borgbackup.readthedocs.io/en/stable/).
 
 Min config is 1Ghz, 1GB RAM, 5GB disk. Recommended is 1.5GB RAM + swap.
 
