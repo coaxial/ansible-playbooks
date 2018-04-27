@@ -1,8 +1,10 @@
 # mailserver playbook
 
-This playbook will deploy a mailcow email server.
+This playbook will deploy a mailcow email server and back up using [borg](https://borgbackup.readthedocs.io/en/stable/).
 
 Min config is 1Ghz, 1GB RAM, 5GB disk. Recommended is 1.5GB RAM + swap.
+
+Leverages the https://github.com/coaxial/ansible-role-mailcow Ansible role, see its README for more details and its vars.
 
 ## Prerequisites
 
@@ -20,11 +22,11 @@ Min config is 1Ghz, 1GB RAM, 5GB disk. Recommended is 1.5GB RAM + swap.
 
 ## Files
 
-Filename | Purpose
+Filename | Purpose | Note
 --- | ---
-mailcow.conf | Mailcow config file, cf. https://mailcow.github.io/mailcow-dockerized-docs/install/
-borgmatic/backup_rsa{,.pub} | ssh keys for connecting to the remote borg repo
-borgmatic/passphrase | remote borg repo passphrase
+`borgmatic/borg_ssh_key{,.pub}` | ssh keys for connecting to the remote borg repo | cf. https://github.com/coaxial/ansible-role-mailcow for customisation options
+`borgmatic/passphrase` | remote borg repo passphrase
+`borgmatic/known_hosts` | ssh keys for remote borg repos | cf. https://github.com/coaxial/ansible-role-mailcow for details
 
 ## Run
 
