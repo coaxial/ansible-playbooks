@@ -15,7 +15,9 @@
   # bootstrap python2
   pre_tasks:
     - name: Install python for Ansible
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      raw: >
+        test -e /usr/bin/python ||
+        (apt -y update && apt install -y python-minimal)
       register: bootstrap_python
       changed_when: bootstrap_python.stdout != '\n'
     - setup:
