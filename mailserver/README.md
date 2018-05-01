@@ -35,6 +35,8 @@ Filename | Purpose | Note
 `$ ansible-galaxy install -r requirements.yml -f`
 `$ ansible-playbooks --limit <host> install.yml [--vault-password-file .vault_pass]`
 
-### Restore an existing installation (WIP)
+### Restore an existing installation
 
 `$ ansible-playbooks --limit <host> restore.yml`
+
+The following variables must be defined when restoring: `mailcow__{borg_repo_host,borg_repo_name,ssh_key_name}` because it isn't using the defaults from the `mailcow` role (unlike the `install` playbook.) `mailcow__enable_backups` is also available, but I'm not sure how much sense it makes to disable borg backups when restoring from a borg backup.
