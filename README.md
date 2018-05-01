@@ -16,3 +16,4 @@ Playbook | Purpose | Notes
 [add-ip](add-ip/) | Add an extra IP address to an existing host |
 [downloader](downloader/) | Deploy [docker-downloader](https://github.com/coaxial/docker-downloader) | Requires additional files, cf README
 [mailserver](mailserver/) | Deploy mailcow + backing up to borg | Requires additional files, cf README
+[healthchecks](healthchecks/) | Deploy [healthchecks](https://github.com/healthchecks/healthchecks)
