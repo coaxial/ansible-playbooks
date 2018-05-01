@@ -1,0 +1,43 @@
+---
+- name: Disable backup cron job
+  cron:
+    name: generate mailcow backup
+    state: absent
+
+- name: Find out which mysql/mariadb version mailcow is running  # to know
+  # which image to use to restore the backup with. The coaxial.mailcow role
+  # pins the mailcow git checkout to a specific commit so it will be consistent
+  become: true
+  shell: >
+    docker ps -f name=mysql-mailcow | grep -iEo
+    '(mariadb|mysql):[[:digit:]]+\.[[:digit:]]+'
+  register: dbs_version
+
+- name: Stop mailcow containers
+  docker_container:
+    name: "{{ item }}"
+    state: stopped
+  with_items:
+    - mailcowdockerized_watchdog-mailcow_1
+    - mailcowdockerized_rspamd-mailcow_1
+    - mailcowdockerized_redis-mailcow_1
+    - mailcowdockerized_mysql-mailcow_1
+    - mailcowdockerized_postfix-mailcow_1
+    - mailcowdockerized_dovecot-mailcow_1
+    - mailcowdockerized_sogo-mailcow_1
+
+- name: Stop borgmatic container  # to avoid backing up stale data
+  docker_service:
+    project_src: /opt/docker-borgmatic
+    stopped: true
+  when: "{{ mailcow__enable_backups | default(true) }}"
+
+- name: Create borg extract directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: 'root'
+    group: 'root'
+  with_items:
+    - /var/backup/mailcow-borg
