@@ -30,7 +30,7 @@
   docker_service:
     project_src: /opt/docker-borgmatic
     stopped: true
-  when: mailcow__enable_backups
+  when: "{{ mailcow__enable_backups | default(true) }}"
 
 - name: Create borg extract directory
   file:

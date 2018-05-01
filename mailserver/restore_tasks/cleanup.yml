@@ -26,10 +26,10 @@
       /opt/mailcow-dockerized/helper-scripts/backup_and_restore.sh backup all
     special_time: hourly
     state: present
-  when: mailcow__enable_backups
+  when: "{{ mailcow__enable_backups | default(true) }}"
 
 - name: Restart borgmatic
   docker_service:
     project_src: /opt/docker-borgmatic
     state: present
-  when: mailcow__enable_backups
+  when: "{{ mailcow__enable_backups | default(true) }}"
