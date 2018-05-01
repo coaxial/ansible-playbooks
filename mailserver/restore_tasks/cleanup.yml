@@ -1,0 +1,35 @@
+---
+- name: Delete extracted files
+  file:
+    path: /var/backup/mailcow-borg
+    state: absent
+
+- name: Restart mailcow
+  docker_service:
+    project_src: /opt/mailcow-dockerized
+    state: present
+
+- name: Get dovecot container id
+  shell: docker ps -qf name=dovecot-mailcow
+  register: dovecot_container_id
+
+- name: Resync dovecot
+  command: >
+    docker exec {{ dovecot_container_id.stdout_lines[0] }}
+    doveadm force-resync -A *
+
+- name: Re-enable backup generation
+  cron:
+    name: generate mailcow backup
+    job: >
+      export BACKUP_LOCATION=/var/backup &&
+      /opt/mailcow-dockerized/helper-scripts/backup_and_restore.sh backup all
+    special_time: hourly
+    state: present
+  when: mailcow__enable_backups
+
+- name: Restart borgmatic
+  docker_service:
+    project_src: /opt/docker-borgmatic
+    state: present
+  when: mailcow__enable_backups

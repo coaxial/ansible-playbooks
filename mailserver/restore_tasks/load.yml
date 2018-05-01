@@ -1,0 +1,73 @@
+
+- name: Extract latest backup
+  docker_container:
+    image: alpine:3.7
+    name: get-backup-name
+    volumes:
+      - /var/backup/mailcow-borg:/backup
+      - /opt/docker-borgmatic/borgmatic:/borgmatic:ro
+      - /opt/docker-borgmatic/ssh:/root/.ssh:ro
+    command: >
+      /bin/sh -xc "
+      apk --no-cache add borgbackup openssh-client &&
+      cd /backup &&
+      export BORG_REMOTE_PATH=borg1 &&
+      export BORG_PASSCOMMAND='cat /borgmatic/passphrase' &&
+      export BORG_RSH='ssh -i /borgmatic/{{ mailcow__ssh_key_name }}' &&
+      borg list --short --last 1 {{ mailcow__borg_repo_host }}:{{ mailcow__borg_repo_name }} | xargs -I '{}' borg extract --sparse {{ mailcow__borg_repo_host }}:{{ mailcow__borg_repo_name }}::'{}'
+      "
+    detach: false
+    cleanup: true
+
+- name: Restore data
+  docker_container:
+    image: alpine:3.7
+    name: "{{ item.name }}"
+    volumes:
+      - /var/backup/mailcow-borg/backup/mailcow:/backup
+      - "{{ item.volume }}"
+    command: "sh -c '{{ item.command }}'"
+    # auto_remove: true
+    cleanup: true
+    detach: false
+  with_items:
+    - volume: 'mailcowdockerized_vmail-vol-1:/vmail'
+      command: cp -rp /backup/vmail/* /vmail/
+      name: restore-vmail
+    - volume: 'mailcowdockerized_redis-vol-1:/redis'
+      command: cp -rp /backup/redis/* /redis/
+      name: restore-redis
+    - volume: 'mailcowdockerized_rspamd-vol-1:/rspamd'
+      command: cp -rp /backup/rspamd/* /rspamd/
+      name: restore-rspamd
+    - volume: 'mailcowdockerized_postfix-vol-1:/postfix'
+      command: cp -rp /backup/postfix/* /postfix/
+      name: restore-postfix
+
+- name: Fix db dump permissions  # so it can be read by user mysql within the
+  # mysql and mariadb containers
+  file:
+    path: "{{ item.path }}"
+    mode: '0666'
+  with_items:
+    - path: /var/backup/mailcow-borg/backup/mailcow/
+    - path: /var/backup/mailcow-borg/backup/mailcow/backup_mysql
+
+- name: Restore database
+  docker_container:
+    image: "{{ dbs_version.stdout_lines[0] }}"
+    name: dbrestore
+    volumes:
+      - /var/backup/mailcow-borg/backup/mailcow/backup_mysql:/backup_mysql
+      - mailcowdockerized_mysql-vol-1:/var/lib/mysql/
+    entrypoint: ''
+    user: mysql
+    command: >
+      /bin/sh -c '
+      mysqld --skip-grant-tables &
+      until mysqladmin ping; do sleep 3; done &&
+      mysql -uroot < /backup_mysql &&
+      mysql -uroot -e SHUTDOWN
+      '
+    cleanup: true
+    detach: false

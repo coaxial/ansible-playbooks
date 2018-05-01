@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars.yml
+  vars:
+    mailcow__ssh_key_name: borg_ssh_key
+
+  tasks:
+    - include_tasks: restore_tasks/prepare.yml
+    - include_tasks: restore_tasks/load.yml
+    - include_tasks: restore_tasks/cleanup.yml
