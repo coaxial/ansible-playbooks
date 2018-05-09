@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars/hc.yml
+  vars:
+    hc__enable_backups: true
+    # required by the docker role, cf.
+    # https://github.com/geerlingguy/ansible-role-docker/blob/master/README.md
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
+
+  # bootstrap python2
+  pre_tasks:
+    - name: Install python for Ansible
+      raw: >
+        test -e /usr/bin/python ||
+        (apt -y update && apt install -y python-minimal)
+    - setup:
+
+  roles:
+    - coaxial.base
+    - geerlingguy.pip
+    - geerlingguy.docker
+      # - coaxial.healthchecks
+    - ../../ansible-role-healthchecks
