@@ -5,7 +5,6 @@
   vars_files:
     - vars/hc.yml
   vars:
-    hc__enable_backups: true
     # required by the docker role, cf.
     # https://github.com/geerlingguy/ansible-role-docker/blob/master/README.md
     pip_install_packages:
@@ -24,5 +23,4 @@
     - coaxial.base
     - geerlingguy.pip
     - geerlingguy.docker
-      # - coaxial.healthchecks
-    - ../../ansible-role-healthchecks
+    - coaxial.healthchecks
