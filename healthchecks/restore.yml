@@ -75,7 +75,6 @@
       file:
         path: /hc-backup
         state: absent
-      when: false
 
     - name: Restart app
       docker_service:
