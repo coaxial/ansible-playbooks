@@ -10,6 +10,7 @@
     pip_install_packages:
       - name: docker
       - name: docker-compose
+    dp__le_timeout: 120
 
   # bootstrap python2
   pre_tasks:
@@ -24,3 +25,4 @@
     - geerlingguy.pip
     - geerlingguy.docker
     - coaxial.healthchecks
+    - ../../ansible-role-docker-proxy
