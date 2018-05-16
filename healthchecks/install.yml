@@ -25,4 +25,4 @@
     - geerlingguy.pip
     - geerlingguy.docker
     - coaxial.healthchecks
-    - ../../ansible-role-docker-proxy
+    - coaxial.docker-proxy
