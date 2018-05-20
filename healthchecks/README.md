@@ -1,6 +1,6 @@
 # Healthchecks
 
-Deploys a [healtchecks](https://github.com/healthchecks/healthchecks) instance for monitoring cron jobs etc.
+Deploys a [healtchecks](https://github.com/healthchecks/healthchecks) instance for monitoring cron jobs etc. Optionally restore the latest backup after installing and optionally backups up hourly to a borg repository.
 
 # Prerequisites
 
@@ -11,7 +11,8 @@ Deploys a [healtchecks](https://github.com/healthchecks/healthchecks) instance f
 # Dependencies
 
 - coaxial.base
-- coaxial.mailcow
+- coaxial.healthchecks
+- coaxial.docker-proxy
 - geerlingguy.docker
 - geerlingguy.pip
 
@@ -30,8 +31,4 @@ $ ansible-galaxy install -r requirements.yml -f
 $ ansible-playbooks --limit <host> install.yml [--vault-password-file .vault_pass]
 ```
 
-To restore from the latest borg backup (run install playbook first)
-```
-$ ansible-galaxy install -r requirements.yml -f
-$ ansible-playbooks --limit <host> restore.yml [--vault-password-file .vault_pass]
-```
+To restore from the latest borg backup, set the `hc__restore_backup` variable to true. It will fetch and restore the latest backup after installing the application.
