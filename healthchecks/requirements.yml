@@ -1,4 +1,5 @@
 - src: coaxial.base
+- src: coaxial.docker-proxy
 - src: coaxial.healthchecks
 - src: geerlingguy.docker
 - src: geerlingguy.pip
