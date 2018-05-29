@@ -1,5 +1,5 @@
 ---
 - src: coaxial.base
-# - src: coaxial.taskserver
+- src: coaxial.taskserver
 - src: geerlingguy.docker
 - src: geerlingguy.pip
