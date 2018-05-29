@@ -1,0 +1,32 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  vars:
+    host_base_required: true  # host is blank and needs base config
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
+
+  tasks:
+    - name: Install python for Ansible
+      raw: >
+        test -e /usr/bin/python ||
+        (apt -y update && apt install -y python-minimal)
+      changed_when: false
+    - setup:
+
+    - name: Configure host
+      include_role:
+        name: "{{ rolevar.name }}"
+      when: rolevar.when
+      with_items:
+        - name: coaxial.base
+          when: host_base_required
+        - name: geerlingguy.pip
+        - name: geerlingguy.docker
+        - name: coaxial.taskserver
+      loop_control:
+        loop_var: rolevar
