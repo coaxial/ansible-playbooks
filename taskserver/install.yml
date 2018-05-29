@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  vars:
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
+
+  pre_tasks:
+    - name: Install python for Ansible
+      raw: >
+        test -e /usr/bin/python ||
+        (apt -y update && apt install -y python-minimal)
+      changed_when: false
+    - setup:
+
+  roles:
+    - coaxial.base
+    - geerlingguy.pip
+    - geerlingguy.docker
+    - ../../ansible-role-taskserver
