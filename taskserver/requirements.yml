@@ -1,4 +1,5 @@
 ---
+- src: coaxial.raw-python
 - src: coaxial.base
 - src: coaxial.taskserver
 - src: geerlingguy.docker
