@@ -1,0 +1,12 @@
+#!/bin/sh
+echo '159.203.2.55 taskw.64b.it' >> /etc/hosts
+apk --no-cache add task
+yes | task config taskd.ca -- /client_certs/ca.cert.pem
+yes | task config taskd.server -- taskw.64b.it:53589
+yes | task config taskd.key -- /client_certs/coaxial.key.pem
+yes | task config taskd.certificate -- /client_certs/coaxial.cert.pem
+yes | task config taskd.credentials "64b.it/coaxial/$(cat /client_certs/coaxial-uuid)"
+task add test taskserver
+yes | task sync init
+task 1 done
+yes | task sync
