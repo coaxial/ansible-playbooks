@@ -23,6 +23,7 @@
     - setup:
 
   roles:
+    - coaxial.raw-python
     - coaxial.base
     - geerlingguy.pip
     - geerlingguy.docker
