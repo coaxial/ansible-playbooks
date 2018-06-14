@@ -1,0 +1,55 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  vars:
+    bootstrap_host: true  # enable if host needs python, firewall, etc.
+    rawpython__pkg_name: python-minimal
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
+
+  tasks:
+    - name: Configure host (1/2)
+      include_role:
+        name: "{{ rolevar.name }}"
+      when: rolevar.when
+      with_items:
+        - name: coaxial.raw-python
+          when: "{{ bootstrap_host }}"
+        - name: coaxial.base
+          when: "{{ bootstrap_host }}"
+      loop_control:
+        loop_var: rolevar
+
+    - name: Add missing packages
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - python-pkg-resources
+        - python-setuptools
+
+    - name: Configure host (2/2)
+      include_role:
+        name: "{{ rolevar.name }}"
+      when: rolevar.when
+      with_items:
+        - name: geerlingguy.pip
+        - name: geerlingguy.docker
+        - name: coaxial.node-exporter
+      loop_control:
+        loop_var: rolevar
+
+    - name: Install ufw
+      package:
+        name: ufw
+        state: present
+
+    - name: Open ports
+      ufw:
+        port: 9100
+        proto: tcp
+        rule: allow
