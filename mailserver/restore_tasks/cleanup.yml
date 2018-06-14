@@ -16,7 +16,8 @@
 - name: Resync dovecot
   command: >
     docker exec {{ dovecot_container_id.stdout_lines[0] }}
-    doveadm force-resync -A *
+    doveadm force-resync -A '*'
+  when: resync_dovecot
 
 - name: Re-enable backup generation
   cron:
