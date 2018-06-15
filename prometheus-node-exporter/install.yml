@@ -12,7 +12,7 @@
       - name: docker-compose
 
   tasks:
-    - name: Configure host (1/2)
+    - name: Configure host
       include_role:
         name: "{{ rolevar.name }}"
       when: rolevar.when
@@ -21,22 +21,6 @@
           when: "{{ bootstrap_host }}"
         - name: coaxial.base
           when: "{{ bootstrap_host }}"
-      loop_control:
-        loop_var: rolevar
-
-    - name: Add missing packages
-      package:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - python-pkg-resources
-        - python-setuptools
-
-    - name: Configure host (2/2)
-      include_role:
-        name: "{{ rolevar.name }}"
-      when: rolevar.when
-      with_items:
         - name: geerlingguy.pip
         - name: geerlingguy.docker
         - name: coaxial.node-exporter
