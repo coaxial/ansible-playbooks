@@ -4,3 +4,4 @@
 - src: geerlingguy.docker
 - src: geerlingguy.pip
 - src: coaxial.node-exporter
+- src: coaxial.docker-proxy

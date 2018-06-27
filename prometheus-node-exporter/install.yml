@@ -24,17 +24,6 @@
         - name: geerlingguy.pip
         - name: geerlingguy.docker
         - name: coaxial.node-exporter
-        - name: ../../ansible-role-docker-proxy
+        - name: coaxial.docker-proxy
       loop_control:
         loop_var: rolevar
-
-    # - name: Install ufw
-    #   package:
-    #     name: ufw
-    #     state: present
-
-    # - name: Open ports
-    #   ufw:
-    #     port: 9100
-    #     proto: tcp
-    #     rule: allow
