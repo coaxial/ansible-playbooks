@@ -9,12 +9,17 @@
     pip_install_packages:
       - name: docker
       - name: docker-compose
+    td__restore_latest_backup: true
+    td__enable_backups: true
+    td__fetch_client_files: true
 
   tasks:
     - name: Configure host
       include_role:
         name: "{{ rolevar.name }}"
-      when: rolevar.when
+      when: |
+        (rolevar.when is defined and rolevar.when)
+        or rolevar.when is not defined
       with_items:
         - name: coaxial.raw-python
           when: "{{ bootstrap_host }}"
