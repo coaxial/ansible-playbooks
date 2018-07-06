@@ -6,7 +6,6 @@
     - vars.yml
   vars:
     bootstrap_host: true  # enable if host needs python, firewall, etc.
-    rawpython__pkg_name: python-minimal
     pip_install_packages:
       - name: docker
       - name: docker-compose
