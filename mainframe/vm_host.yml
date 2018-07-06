@@ -16,8 +16,8 @@
     append: true
     groups: libvirt
   with_items:
-    - "{{ base__operator_user.username }}"
-    - "{{ base__provisioning_user.username }}"
+    - "{{ base__operator_username }}"
+    - "{{ base__provisioning_username }}"
 
 - name: Setup bridge (netplan)
   # for ubuntu < 17.10, use the interfaces.j2 file. for ubuntu >= 17.10, use

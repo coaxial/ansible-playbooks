@@ -4,6 +4,9 @@
   gather_facts: false
   vars_files:
     - vars.yml
+  vars:
+    zfs_enable: true
+    zpool_name: zdata1
 
   # bootstrap python2
   pre_tasks:

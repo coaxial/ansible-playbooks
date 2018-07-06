@@ -1,0 +1,32 @@
+---
+- name: Install zfs
+  package:
+    name: zfsutils-linux
+    state: present
+  when: zfs_enable
+
+- name: Import zfs pool
+  command: "zpool import {{ zpool_name }}"
+  when: zfs_enable
+
+- name: Configure zfs mount points
+  zfs:
+    name: "{{ item.name }}"
+    extra_zfs_properties:
+      mountpoint: "{{ item.mountpoint }}"
+      canmount: "{{ item.canmount }}"
+    state: present
+  when: zfs_enable
+  with_items: "{{ zfs_datasets }}"
+
+- name: Configure nfs sharing
+  zfs:
+    name: "{{ zpool_name }}/storage/nas"
+    extra_zfs_properties:
+      sharenfs: "no_subtree_check,all_squash,rw=@{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask |ipaddr('prefix') }}"
+    state: present
+  when: zfs_enable
+
+- name: Enable zfs shares
+  command: "zfs share -a"
+  when: zfs_enable
