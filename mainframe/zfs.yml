@@ -23,7 +23,7 @@
   zfs:
     name: "{{ zpool_name }}/storage/nas"
     extra_zfs_properties:
-      sharenfs: "no_subtree_check,all_squash,rw=@{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask |ipaddr('prefix') }}"
+      sharenfs: "no_subtree_check,all_squash,rw=@{{ ansible_default_ipv4.network }}/24"
     state: present
   when: zfs_enable
 
