@@ -6,13 +6,13 @@
 - name: Install nfs server
   package:
     name: nfs-kernel-server
-    state: latest
+    state: present
 
 - name: Create mount point for storage partition
   file:
     state: directory
     path: /media/storage
-  when: ansible_devices.sdb is defined
+  when: ansible_devices.sdb is defined and not zfs_enable
 
 - name: Mount storage partition
   lineinfile:
@@ -20,7 +20,7 @@
     regexp: '^UUID={{ ansible_devices.sdb.partitions.sdb3.uuid }}'
     line: 'UUID={{ ansible_devices.sdb.partitions.sdb3.uuid }}  /media/storage  auto  defaults  0 0'
     validate: 'mount -a %s'
-  when: ansible_devices.sdb is defined
+  when: ansible_devices.sdb is defined and not zfs_enable
 
 - name: Configure exports
   template:
@@ -63,6 +63,9 @@
     search_regex: OpenSSH
     delay: 15
   become: false
+
+- name: Configure zfs storage
+  include_tasks: zfs.yml
 
 - name: Open firewall ports
   ufw:

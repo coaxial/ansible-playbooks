@@ -1,1 +1,6 @@
+{% if not zfs_enable -%}
 /media/storage/nas  {{ ansible_default_ipv4.address }}/24(rw,no_subtree_check,all_squash)
+{% endif -%}
+{% if zfs_enable -%}
+/mnt localhost(ro)
+{% endif -%}
