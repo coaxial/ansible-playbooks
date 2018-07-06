@@ -34,7 +34,8 @@
   # https://raymii.org/s/tutorials/Ansible_-_Only_if_on_specific_distribution_or_distribution_version.html#Specific_Distribution_Version
   when: >-
     ansible_distribution == 'Ubuntu' and
-    ansible_distribution_version|float >= 17.10
+    ansible_distribution_version|float >= 17.10 and
+    ansible_default_ipv4.interface not 'br0'
   register: br0_np_setup
 
 - name: Setup bridge (NetworkManager)
@@ -46,7 +47,8 @@
     mode: 0644
   when: >-
     ansible_distribution == 'Ubuntu' and
-    ansible_distribution_version|float < 17.10
+    ansible_distribution_version|float < 17.10 and
+    ansible_default_ipv4.interface not 'br0'
   register: br0_nm_setup
 
 # Waiting for https://github.com/ansible/ansible/issues/34546 to be
