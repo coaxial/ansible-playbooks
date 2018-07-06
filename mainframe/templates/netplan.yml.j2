@@ -8,7 +8,7 @@ network:
     br0:
       interfaces: [{{ ansible_default_ipv4.interface }}]
       dhcp4: no
-      addresses: [{{ ip__ip4 }}/24]
+      addresses: {{ ip__ip4|list }}
       gateway4: {{ ip__gw4 }}
       nameservers:
         search: [lan]
