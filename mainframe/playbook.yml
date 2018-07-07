@@ -3,7 +3,7 @@
   become: true
   gather_facts: false
   vars_files:
-    - vars.yml
+    - vars/vars.yml
   vars:
     zfs_enable: true
     zpool_name: zdata1
@@ -14,7 +14,7 @@
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       register: bootstrap_python
       changed_when: bootstrap_python.stdout != ''
-    - include: hostname.yml
+    - include: tasks/hostname.yml
     - setup:
 
 
@@ -23,9 +23,13 @@
     - angstwad.docker_ubuntu
 
   tasks:
-    - include: refresh_apt_cache.yml
+    - include: tasks/refresh_apt_cache.yml
     # Waiting for https://github.com/ansible/ansible/issues/34546 to be
     # resolved
-    # - include: ip.yml
-    - include: file_server.yml
-    - include: vm_host.yml
+    # - include: tasks/ip.yml
+    - include: tasks/file_server.yml
+    - include: tasks/vm_host.yml
+    - include: tasks/send_mail.yml
+
+  handlers:
+    - include: handlers/postfix.yml
