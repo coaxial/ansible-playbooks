@@ -47,3 +47,9 @@
 - name: Enable zfs shares
   command: "zfs share -a"
   when: not zpool_already_imported
+
+- name: Enable periodic scrubbing
+  cron:
+    name: "scrub zfs pool"
+    job: "zpool scrub {{ zpool_name }}"
+    special_time: weekly
