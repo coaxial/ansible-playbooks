@@ -35,7 +35,7 @@
   when: >-
     ansible_distribution == 'Ubuntu' and
     ansible_distribution_version|float >= 17.10 and
-    ansible_default_ipv4.interface not 'br0'
+    ansible_default_ipv4.interface != 'br0'
   register: br0_np_setup
 
 - name: Setup bridge (NetworkManager)
@@ -48,7 +48,7 @@
   when: >-
     ansible_distribution == 'Ubuntu' and
     ansible_distribution_version|float < 17.10 and
-    ansible_default_ipv4.interface not 'br0'
+    ansible_default_ipv4.interface != 'br0'
   register: br0_nm_setup
 
 # Waiting for https://github.com/ansible/ansible/issues/34546 to be

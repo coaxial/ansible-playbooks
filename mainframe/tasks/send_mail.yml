@@ -1,0 +1,38 @@
+---
+- name: Install postfix and deps
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - postfix
+    - libsasl2-modules
+  notify: restart postfix
+
+- name: Configure postfix
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - src: main.cf.j2
+      dest: /etc/postfix/main.cf
+      mode: "0644"
+    - src: sasl_passwd.j2
+      dest: /etc/postfix/sasl_passwd
+      mode: "0600"
+  notify: restart postfix
+
+- name: Create hash db file
+  command: postmap /etc/postfix/sasl_passwd
+  args:
+    creates: /etc/postfix/sasl_passwd.db
+
+- name: Secure hash db
+  file:
+    path: /etc/postfix/sasl_passwd.db
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart postfix

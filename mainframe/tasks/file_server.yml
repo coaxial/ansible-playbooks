@@ -1,7 +1,7 @@
 ---
 - name: Load vars
   include_vars:
-    file: file_server_vars.yml
+    file: vars/file_server_vars.yml
 
 - name: Install nfs server
   package:
