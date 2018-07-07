@@ -14,6 +14,16 @@
   set_fact:
     zpool_already_imported: "{{ zpool_imported_test_cmd.stdout |bool }}"
 
+- name: Configure ZED
+  template:
+    src: templates/zed.rc.j2
+    dest: /etc/zfs/zed.d/zed.rc
+    mode: "0600"
+    owner: root
+    group: root
+  notify: restart zed
+  when: zfs_enable
+
 - name: Import zfs pool
   command: "zpool import {{ zpool_name }}"
   when: zfs_enable and not zpool_already_imported

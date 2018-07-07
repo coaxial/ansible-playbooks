@@ -33,3 +33,4 @@
 
   handlers:
     - include: handlers/postfix.yml
+    - include: handlers/zed.yml
