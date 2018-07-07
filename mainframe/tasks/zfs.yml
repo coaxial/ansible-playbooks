@@ -3,7 +3,6 @@
   package:
     name: zfsutils-linux
     state: present
-  when: zfs_enable
 
 - name: Check if pool already imported
   shell: "zpool status {{ zpool_name }} >/dev/null 2>&1 && echo 'True' || echo 'False'"
@@ -22,11 +21,10 @@
     owner: root
     group: root
   notify: restart zed
-  when: zfs_enable
 
 - name: Import zfs pool
   command: "zpool import {{ zpool_name }}"
-  when: zfs_enable and not zpool_already_imported
+  when: not zpool_already_imported
 
 - name: Configure zfs mount points
   zfs:
@@ -35,7 +33,7 @@
       mountpoint: "{{ item.mountpoint }}"
       canmount: "{{ item.canmount }}"
     state: present
-  when: zfs_enable and not zpool_already_imported
+  when: zpool_already_imported
   with_items: "{{ zfs_datasets }}"
 
 - name: Configure nfs sharing
@@ -44,8 +42,8 @@
     extra_zfs_properties:
       sharenfs: "no_subtree_check,all_squash,rw=@{{ ansible_default_ipv4.network }}/24"
     state: present
-  when: zfs_enable and not zpool_already_imported
+  when: not zpool_already_imported
 
 - name: Enable zfs shares
   command: "zfs share -a"
-  when: zfs_enable and not zpool_already_imported
+  when: not zpool_already_imported

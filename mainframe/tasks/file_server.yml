@@ -66,6 +66,7 @@
 
 - name: Configure zfs storage
   include_tasks: zfs.yml
+  when: zfs_enable
 
 - name: Open firewall ports
   ufw:
