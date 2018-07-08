@@ -58,7 +58,7 @@
       mountpoint: "{{ item.mountpoint }}"
       canmount: "{{ item.canmount }}"
     state: present
-  when: zpool_already_imported
+  when: not zpool_already_imported
   with_items: "{{ zfs_datasets }}"
 
 - name: Configure nfs sharing
@@ -77,4 +77,7 @@
   cron:
     name: "scrub zfs pool"
     job: "zpool scrub {{ zpool_name }}"
-    special_time: weekly
+    # at 6am on Sunday
+    hour: 6
+    minute: 0
+    dow: 0
