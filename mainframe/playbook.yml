@@ -29,6 +29,8 @@
     # - include: tasks/ip.yml
     - include: tasks/file_server.yml
     - include: tasks/vm_host.yml
+    - include_role:
+        name: coaxial.lxd
     - include: tasks/send_mail.yml
 
   handlers:

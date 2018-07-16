@@ -1,5 +1,5 @@
 limit ?= mainframe
-.PHONY: all install_reqs playbook_run clean limit_info
+.PHONY: all install_reqs playbook_run clean limit_info editvars
 
 all: limit_info playbook_run
 
@@ -21,8 +21,12 @@ install_reqs:
 	chmod 600 .vault_pass; \
 	echo
 
+editvars: .vault_pass
+	@ansible-vault edit vars/vars.yml --vault-password-file .vault_pass
+
 playbook_run: .vault_pass install_reqs
 	@ansible-playbook --limit $(limit) playbook.yml --vault-password-file .vault_pass
+	@- rm -f playbook.retry
 
 clean:
 	@-rm -f .vault_pass
