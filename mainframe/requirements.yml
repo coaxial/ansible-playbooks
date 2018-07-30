@@ -1,6 +1,7 @@
 ---
-- src: coaxial.base
-# - src: coaxial.lxd
+- src: https://github.com/coaxial/ansible-role-base.git
+  name: coaxial.base
 - src: https://github.com/coaxial/ansible-role-lxd.git
   name: coaxial.lxd
-- src: angstwad.docker_ubuntu
+- src: https://github.com/angstwad/docker.ubuntu
+  name: angstwad.docker_ubuntu
