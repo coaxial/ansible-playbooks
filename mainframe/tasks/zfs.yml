@@ -57,7 +57,7 @@
     extra_zfs_properties:
       mountpoint: "{{ item.mountpoint }}"
       canmount: "{{ item.canmount }}"
-      com.sun:auto-snapshot: "{{ item.autosnapshot | default(true) }}"
+      com.sun:auto-snapshot: "{{ item.autosnapshot | default('true') }}"
     state: present
   with_items: "{{ zfs_datasets }}"
 
