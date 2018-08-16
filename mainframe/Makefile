@@ -21,7 +21,10 @@ install_reqs:
 	chmod 600 .vault_pass; \
 	echo
 
-editvars: .vault_pass
+vars/vars.yml: .vault_pass
+	@ansible-vault create vars/vars.yml --vault-password-file .vault_pass
+
+editvars: vars/vars.yml
 	@ansible-vault edit vars/vars.yml --vault-password-file .vault_pass
 
 playbook_run: .vault_pass install_reqs
