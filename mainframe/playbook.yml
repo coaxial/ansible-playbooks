@@ -32,6 +32,10 @@
     - include_role:
         name: coaxial.lxd
     - include: tasks/send_mail.yml
+    - include: tasks/lxd_profile.yml
+    - include_role:
+        name: coaxial.create-lxd-container
+      with_items: "{{ cc__containers }}"
 
   handlers:
     - include: handlers/postfix.yml

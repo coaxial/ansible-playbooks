@@ -1,7 +1,10 @@
 ---
+# galaxy is unreliable, use github as a source instead
 - src: https://github.com/coaxial/ansible-role-base.git
   name: coaxial.base
 - src: https://github.com/coaxial/ansible-role-lxd.git
   name: coaxial.lxd
 - src: https://github.com/angstwad/docker.ubuntu
   name: angstwad.docker_ubuntu
+- src: https://github.com/coaxial/ansible-role-create-lxd-container.git
+  name: coaxial.create-lxd-container

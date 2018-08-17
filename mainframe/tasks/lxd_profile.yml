@@ -1,0 +1,11 @@
+---
+- name: Create network profile
+  lxd_profile:
+    description: 'Intended for containers reachable from the Internet'
+    name: lan_ip
+    devices:
+      eth0:
+        name: eth0
+        nictype: bridged
+        parent: br0
+        type: nic

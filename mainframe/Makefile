@@ -1,4 +1,5 @@
 limit ?= mainframe
+verbosity ?=
 .PHONY: all install_reqs playbook_run clean limit_info editvars
 
 all: limit_info playbook_run
@@ -28,7 +29,7 @@ editvars: vars/vars.yml
 	@ansible-vault edit vars/vars.yml --vault-password-file .vault_pass
 
 playbook_run: .vault_pass install_reqs
-	@ansible-playbook --limit $(limit) playbook.yml --vault-password-file .vault_pass
+	@ansible-playbook --limit $(limit) playbook.yml --vault-password-file .vault_pass $(verbosity)
 	@- rm -f playbook.retry
 
 clean:
