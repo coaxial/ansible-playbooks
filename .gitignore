@@ -6,3 +6,4 @@ restore-vm/vm_list.yml
 inventory.ini
 downloader/files/subtitles.env
 client_files
+.yo-rc.json
