@@ -2,10 +2,27 @@
 - name: Create network profile
   lxd_profile:
     description: 'Intended for containers reachable from the Internet'
-    name: lan_ip
+    name: ansible
+    config:
+      environment.TZ: ""
+      user.user-data: |
+        #cloud-config
+        package-upgrade: true
+        packages:
+          - python-minimal
+        timezone: Etc/UTC
+        users:
+          - name: ansible
+            sudo: [ "ALL=(ALL) NOPASSWD:ALL"]
+            ssh_authorized_keys:
+              - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     devices:
+      root:
+        path: /
+        pool: default
+        type: disk
       eth0:
         name: eth0
-        nictype: bridged
+        nictype: macvlan
         parent: br0
         type: nic

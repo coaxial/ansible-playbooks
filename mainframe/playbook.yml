@@ -17,7 +17,6 @@
     - include: tasks/hostname.yml
     - setup:
 
-
   roles:
     - coaxial.base
     - angstwad.docker_ubuntu
