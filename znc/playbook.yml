@@ -1,9 +1,44 @@
 ---
 - hosts: all
   become: true
-  # vars:
-  #   - myvar: value
   vars_files:
     - vars/enc_vars.yml
     - vars/vars.yml
   tasks:
+    - name: Install ZNC
+      include_role:
+        name: coaxial.znc
+
+    - name: Add regular users
+      blockinfile:
+        path: /var/lib/znc/configs/znc.conf
+        block: "{{ lookup('template', './templates/znc_users.conf') }}"
+      with_items:
+        - znc__users
+
+    - name: Create certauth config dir
+      file:
+        path: "{{ item.path }}"
+        state: "{{ item.state }}"
+        owner: znc
+        group: znc
+        mode: "{{ item.mode }}"
+      with_items:
+        - path: /var/lib/znc/moddata/certauth/
+          state: directory
+          mode: 0700
+        - path: /var/lib/znc/moddata/certauth/.registry
+          state: file
+          mode: 0600
+
+    - name: Configure certauth
+      lineinfile:
+        path: /var/lib/znc/moddata/certauth/.registry
+        # cf. https://regex101.com/r/QMHUDO/1
+        regexp: "^{{ item.username }} (?!{{ item.pubkey }})[0-9a-f]{40};$"
+        line: "{{ item.username }} {{ item.pubkey }};"
+        owner: znc
+        group: znc
+        mode: 0600
+      with_items:
+        - znc__users
