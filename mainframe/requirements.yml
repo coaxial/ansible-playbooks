@@ -1,6 +1,7 @@
 ---
 - src: https://github.com/coaxial/ansible-role-base.git
   name: coaxial.base
+  version: 1.2.1
 - src: https://github.com/coaxial/ansible-role-lxd.git
   name: coaxial.lxd
 - src: https://github.com/angstwad/docker.ubuntu
