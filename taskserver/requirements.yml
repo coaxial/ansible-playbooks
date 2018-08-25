@@ -1,6 +1,7 @@
 ---
 - src: coaxial.raw-python
 - src: coaxial.base
+  version: 1.2.1
 - src: coaxial.taskserver
 - src: geerlingguy.docker
 - src: geerlingguy.pip
