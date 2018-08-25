@@ -1,4 +1,5 @@
 limit ?= "znc"
+verbosity ?=
 .PHONY: all install_reqs playbook_run clean limit_info editvars
 
 all: limit_info playbook_run
@@ -32,7 +33,7 @@ editvars: .vault_pass vars/enc_vars.yml
 	@ansible-vault edit vars/enc_vars.yml --vault-password-file .vault_pass
 
 playbook_run: .vault_pass install_reqs
-	@ansible-playbook --limit $(limit) playbook.yml --vault-password-file .vault_pass
+	@ansible-playbook --limit $(limit) playbook.yml --vault-password-file .vault_pass $(verbosity)
 	@- rm -f playbook.retry
 
 clean:
