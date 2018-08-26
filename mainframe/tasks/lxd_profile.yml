@@ -26,6 +26,6 @@
         type: disk
       eth0:
         name: eth0
-        nictype: macvlan
+        nictype: bridged
         parent: br0
         type: nic
