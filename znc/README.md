@@ -10,6 +10,7 @@ Install and configure ZNC, the IRC bouncer
 
 # Sample `znc__users`
 
+```yaml
 znc__users:
   - username: 1972_bob_dylan
     nick: bd
@@ -20,3 +21,4 @@ znc__users:
     networks:
       - name: freenode
         clientcert: '~/.irssi/certs/user.pem'
+```
