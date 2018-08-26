@@ -8,6 +8,8 @@ Install and configure ZNC, the IRC bouncer
 - `make limit=host1,host2` will run the playbook on host1 and host2 only instead of the default hosts (i.e. znc)
 - `make editvars` will prompt for the encryption password if `.vault_pass` is missing and edit the encrypted variables file at `vars/enc_vars.yml`
 
+Configure users in the `znc__users` variable and then connect to ZNC using that user's certificate for passwordless auth.
+
 # Sample `znc__users`
 
 ```yaml
