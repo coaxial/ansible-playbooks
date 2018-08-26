@@ -1,0 +1,28 @@
+{% for user in znc__users -%}
+<User {{ user.username }}>
+  AltNick = {{ user.altnick | default(user.nick + "_") }}
+  AutoClearChanBuffer = false
+  AutoClearQueryBuffer = false
+  ClientEncoding = {{ user.encoding | default('UTF-8') }}
+  DenyLoadMod = true
+  Ident = {{ user.ident | default('znc') }}
+  Nick = {{ user.nick | default(user.username) }}
+  Pass = sha256#{{ (user.password + user.salt) | hash('sha256') }}#{{ user.salt }}#
+  QuitMsg = bye
+  RealName = {{ user.realname | default(user.nick) }}
+  Timezone = {{ user.timezone | default('Etc/UTC') }}
+
+  {% for network in user.networks -%}
+  <Network {{ network.name }}>
+    IRCConnectEnabled = true
+    {% if network.sasl is defined and network.sasl -%}
+    LoadModule = sasl
+    {% endif -%}
+    {% if network.clientcert is defined and network.clientcert -%}
+    LoadModule = cert
+    {% endif -%}
+    Server = chat.freenode.net +7000
+  </Network>
+  {% endfor -%}
+</User>
+{% endfor -%}

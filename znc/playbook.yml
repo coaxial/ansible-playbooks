@@ -1,0 +1,71 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/enc_vars.yml
+    - vars/vars.yml
+  tasks:
+    - name: Install ZNC
+      include_role:
+        name: "{{ role }}"
+      with_items:
+        - coaxial.base
+        - coaxial.znc
+      loop_control:
+        loop_var: role
+
+    - name: Add regular users
+      blockinfile:
+        path: /var/lib/znc/configs/znc.conf
+        content: "{{ lookup('template', './templates/znc_users.conf.j2') }}"
+
+    - name: Create certauth config dir
+      file:
+        path: "{{ item.path }}"
+        state: "{{ item.state }}"
+        owner: znc
+        group: znc
+        mode: "{{ item.mode }}"
+      with_items:
+        - path: /var/lib/znc/moddata/certauth/
+          state: directory
+          mode: 0o700
+
+    - name: Configure certauth
+      template:
+        src: templates/.registry.j2
+        dest: /var/lib/znc/moddata/certauth/.registry
+        owner: znc
+        group: znc
+        mode: 0o600
+      with_items: "{{ znc__users }}"
+
+    - name: Create CertFP directories
+      file:
+        path: "/var/lib/znc/users/{{ item.0.username }}/networks/{{ item.1.name }}/moddata/cert/"
+        owner: znc
+        group: znc
+        mode: 0o700
+        state: directory
+      with_subelements:
+        - "{{ znc__users }}"
+        - networks
+
+    - name: Configure CertFP
+      copy:
+        src: "{{ item.1.clientcert }}"
+        dest: "/var/lib/znc/users/{{ item.0.username }}/networks/{{ item.1.name }}/moddata/cert/user.pem"
+        owner: znc
+        group: znc
+        mode: 0o600
+      with_subelements:
+        - "{{ znc__users }}"
+        - networks
+
+    - name: Open port
+      iptables:
+        chain: INPUT
+        destination_port: "{{ znc__port }}"
+        protocol: tcp
+        jump: ACCEPT
+        comment: Allow ZNC traffic

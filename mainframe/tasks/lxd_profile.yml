@@ -1,0 +1,31 @@
+---
+- name: Create ansible container profile
+  lxd_profile:
+    description: 'Common base profile for Ansible containers'
+    name: ansible
+    config:
+      environment.TZ: ""
+      user.user-data: |
+        #cloud-config
+        bootcmd:
+          - cloud-init-per once fix_hosts echo "127.0.1.1 $(hostname -s)" >> /etc/hosts
+        package-upgrade: true
+        packages:
+          - python-minimal
+        timezone: Etc/UTC
+        update_etc_hosts: true
+        users:
+          - name: ansible
+            sudo: [ "ALL=(ALL) NOPASSWD:ALL"]
+            ssh_authorized_keys:
+              - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    devices:
+      root:
+        path: /
+        pool: default
+        type: disk
+      eth0:
+        name: eth0
+        nictype: macvlan
+        parent: br0
+        type: nic
