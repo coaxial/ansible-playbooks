@@ -3,6 +3,7 @@
   AltNick = {{ user.altnick | default(user.nick + "_") }}
   AutoClearChanBuffer = false
   AutoClearQueryBuffer = false
+  ClientEncoding = {{ user.encoding | default('UTF-8') }}
   DenyLoadMod = true
   Ident = {{ user.ident | default('znc') }}
   Nick = {{ user.nick | default(user.username) }}
