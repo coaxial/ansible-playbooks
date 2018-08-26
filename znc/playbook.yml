@@ -7,14 +7,21 @@
   tasks:
     - name: Install ZNC
       include_role:
-        name: coaxial.znc
+        name: "{{ role }}"
+      with_items:
+        - coaxial.base
+        - coaxial.znc
+      loop_control:
+        loop_var: role
+
+    - debug:
+        msg: "{{ znc__users }}"
 
     - name: Add regular users
       blockinfile:
         path: /var/lib/znc/configs/znc.conf
-        block: "{{ lookup('template', './templates/znc_users.conf') }}"
-      with_items:
-        - znc__users
+        content: "{{ lookup('template', './templates/znc_users.conf.j2') }}"
+      # with_items: "{{ znc__users }}"
 
     - name: Create certauth config dir
       file:
@@ -26,19 +33,26 @@
       with_items:
         - path: /var/lib/znc/moddata/certauth/
           state: directory
-          mode: 0700
+          mode: 0o700
         - path: /var/lib/znc/moddata/certauth/.registry
-          state: file
-          mode: 0600
+          state: touch
+          mode: 0o600
 
     - name: Configure certauth
       lineinfile:
         path: /var/lib/znc/moddata/certauth/.registry
         # cf. https://regex101.com/r/QMHUDO/1
-        regexp: "^{{ item.username }} (?!{{ item.pubkey }})[0-9a-f]{40};$"
-        line: "{{ item.username }} {{ item.pubkey }};"
+        regexp: "^{{ item.username }} (?!{{ item.pubkey }})[0-9a-f]{40}%20;$"
+        line: "{{ item.username }} {{ item.pubkey }}%20;"
         owner: znc
         group: znc
         mode: 0600
-      with_items:
-        - znc__users
+      with_items: "{{ znc__users }}"
+
+    - name: Open port
+      iptables:
+        chain: INPUT
+        destination_port: "{{ znc__port }}"
+        protocol: tcp
+        jump: ACCEPT
+        comment: Allow ZNC traffic
