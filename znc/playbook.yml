@@ -14,14 +14,10 @@
       loop_control:
         loop_var: role
 
-    - debug:
-        msg: "{{ znc__users }}"
-
     - name: Add regular users
       blockinfile:
         path: /var/lib/znc/configs/znc.conf
         content: "{{ lookup('template', './templates/znc_users.conf.j2') }}"
-      # with_items: "{{ znc__users }}"
 
     - name: Create certauth config dir
       file:
@@ -46,8 +42,30 @@
         line: "{{ item.username }} {{ item.pubkey }}%20;"
         owner: znc
         group: znc
-        mode: 0600
+        mode: 0o600
       with_items: "{{ znc__users }}"
+
+    - name: Create CertFP directories
+      file:
+        path: "/var/lib/znc/users/{{ item.0.username }}/networks/{{ item.1.name }}/moddata/cert/"
+        owner: znc
+        group: znc
+        mode: 0o700
+        state: directory
+      with_subelements:
+        - "{{ znc__users }}"
+        - networks
+
+    - name: Configure CertFP
+      copy:
+        src: "{{ item.1.clientcert }}"
+        dest: "/var/lib/znc/users/{{ item.0.username }}/networks/{{ item.1.name }}/moddata/cert/user.pem"
+        owner: znc
+        group: znc
+        mode: 0o600
+      with_subelements:
+        - "{{ znc__users }}"
+        - networks
 
     - name: Open port
       iptables:

@@ -17,6 +17,9 @@
     {% if network.sasl is defined and network.sasl -%}
     LoadModule = sasl
     {% endif -%}
+    {% if network.clientcert is defined and network.clientcert -%}
+    LoadModule = cert
+    {% endif -%}
     Server = chat.freenode.net +7000
   </Network>
   {% endfor -%}
