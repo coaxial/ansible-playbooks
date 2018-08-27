@@ -1,5 +1,7 @@
 ---
 # galaxy is unreliable, use github as a source instead
+- src: https://github.com/coaxial/ansible-role-raw-python.git
+  name: coaxial.raw-python
 - src: https://github.com/coaxial/ansible-role-base.git
   name: coaxial.base
   version: 1.2.1
@@ -9,3 +11,7 @@
   name: angstwad.docker_ubuntu
 - src: https://github.com/coaxial/ansible-role-create-lxd-container.git
   name: coaxial.create-lxd-container
+- src: https://github.com/coaxial/ansible-role-firewall-rule.git
+  name: coaxial.firewall_rule
+- src: https://github.com/coaxial/ansible-role-node-exporter.git
+  name: coaxial.node_exporter

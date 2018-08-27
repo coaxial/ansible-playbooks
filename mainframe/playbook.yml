@@ -8,16 +8,8 @@
     zfs_enable: true
     zpool_name: zdata1
 
-  # bootstrap python2
-  pre_tasks:
-    - name: Install python for Ansible
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      register: bootstrap_python
-      changed_when: bootstrap_python.stdout != ''
-    - include: tasks/hostname.yml
-    - setup:
-
   roles:
+    - coaxial.raw-python
     - coaxial.base
     - angstwad.docker_ubuntu
 
@@ -35,6 +27,7 @@
     - include_role:
         name: coaxial.create-lxd-container
       with_items: "{{ cc__containers }}"
+    - include: tasks/node-exporter.yml
 
   handlers:
     - include: handlers/postfix.yml
