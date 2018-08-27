@@ -9,17 +9,12 @@
     pip_install_packages:
       - name: docker
       - name: docker-compose
-    td__restore_latest_backup: true
-    td__enable_backups: true
-    td__fetch_client_files: true
 
   tasks:
     - name: Configure host
       include_role:
         name: "{{ rolevar.name }}"
-      when: |
-        (rolevar.when is defined and rolevar.when)
-        or rolevar.when is not defined
+      when: rolevar.when
       with_items:
         - name: coaxial.raw-python
           when: "{{ bootstrap_host }}"
@@ -27,6 +22,7 @@
           when: "{{ bootstrap_host }}"
         - name: geerlingguy.pip
         - name: geerlingguy.docker
-        - name: coaxial.taskserver
+        - name: coaxial.node-exporter
+        - name: coaxial.docker-proxy
       loop_control:
         loop_var: rolevar
