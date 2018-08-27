@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+  # vars:
+  #   - myvar: value
+  vars_files:
+    - vars/enc_vars.yml
+    - vars/vars.yml
+  tasks:

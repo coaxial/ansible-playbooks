@@ -1,0 +1,6 @@
+---
+# If Galaxy is down, use:
+# - src: https://example.org/user/repo.git
+#   name: user.repo
+# Otherwise:
+# - src: coaxial.base
