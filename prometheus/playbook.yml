@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/enc_vars.yml
+    - vars/vars.yml
+  tasks:
+    - name: Configure Prometheus
+      include_role:
+        name: cloudalchemy.prometheus
+
+    - name: Open firewall port
+      include_role:
+        name: coaxial.firewall_rule
+      vars:
+        fwr__rules:
+          - chain: INPUT
+            destination_port: 9090
+            protocol: tcp
+            jump: ACCEPT
