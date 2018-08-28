@@ -5,6 +5,9 @@
     - vars/enc_vars.yml
     - vars/vars.yml
   tasks:
+    - name: Apply base config
+      include_role:
+        name: coaxial.base
     - name: Configure Prometheus
       include_role:
         name: cloudalchemy.prometheus

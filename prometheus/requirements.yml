@@ -1,4 +1,5 @@
 ---
-- src: coaxial.base
+- src: https://github.com/coaxial/ansible-role-base.git
+  name: coaxial.base
 - src: coaxial.firewall_rule
 - src: cloudalchemy.prometheus
