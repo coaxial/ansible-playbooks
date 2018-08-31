@@ -7,3 +7,14 @@
     - vars/enc_vars.yml
     - vars/vars.yml
   tasks:
+    - name: Configure host
+      include_role:
+        name: coaxial.base
+
+    - name: Configure Grafana
+      include_role:
+        name: cloudalchemy.grafana
+
+    - name: Open firewall
+      include_role:
+        name: coaxial.firewall_rule
