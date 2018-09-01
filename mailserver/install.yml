@@ -4,7 +4,7 @@
   # because there is no python2 yet
   gather_facts: false
   vars_files:
-    - vars.yml
+    - vars/vars.yml
   vars:
     # required by the docker role, cf.
     # https://github.com/geerlingguy/ansible-role-docker/blob/master/README.md
@@ -28,3 +28,7 @@
     - geerlingguy.pip
     - geerlingguy.docker
     - coaxial.mailcow
+
+  tasks:
+    - name: Configure node_exporter
+      include_tasks: tasks/node-exporter.yml
