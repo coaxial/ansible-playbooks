@@ -2,7 +2,7 @@
 - hosts: all
   become: true
   vars_files:
-    - vars/enc_vars.yml
+    - vars/vars.yml
   vars:
     mailcow__ssh_key_name: borg_ssh_key
 

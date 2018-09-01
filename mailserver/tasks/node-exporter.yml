@@ -14,3 +14,4 @@
         jump: ACCEPT
         protocol: tcp
         destination_port: 9100
+        ip_version: ipv6
