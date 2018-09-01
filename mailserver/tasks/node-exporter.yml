@@ -1,0 +1,16 @@
+---
+- name: Setup node_exporter
+  include_role:
+    name: coaxial.node_exporter
+
+- name: Open firewall port
+  include_role:
+    name: coaxial.firewall_rule
+  vars:
+    fwr__rules:
+      - chain: INPUT
+        source: "{{ prom_source_addr }}"
+        action: insert  # to go before ufw rules
+        jump: ACCEPT
+        protocol: tcp
+        destination_port: 9100

@@ -4,7 +4,7 @@
   # because there is no python2 yet
   gather_facts: false
   vars_files:
-    - vars.yml
+    - vars/enc_vars.yml
   vars:
     # required by the docker role, cf.
     # https://github.com/geerlingguy/ansible-role-docker/blob/master/README.md
