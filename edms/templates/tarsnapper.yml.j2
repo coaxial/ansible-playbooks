@@ -10,6 +10,7 @@ jobs:
     sources:
       - /tmp/mayan.sql
       - {{ venv }}/mayan/media/document_storage
+      - {{ venv }}/mayan/media/document_cache
       - {{ venv }}/mayan/settings
     exec_before: sudo -u postgres pg_dump mayan > /tmp/mayan.sql
     exec_after: rm /tmp/mayan.sql
