@@ -178,6 +178,26 @@
     owner: www-data
     group: www-data
 
+- name: Create document cache directory
+  # tarsnapper will fail the backup if there are no documents in Mayan
+  # because that directory won't exist but will be in tarnsapper.yml
+  file:
+    path: "{{ venv }}/mayan/media/document_cache"
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: www-data
+
+- name: Put a dummy file in document cache directory
+  # tarsnapper will fail the backup if there are no documents in Mayan
+  # because that directory won't exist but will be in tarnsapper.yml
+  file:
+    path: "{{ venv }}/mayan/media/document_cache/.keep"
+    state: touch
+    mode: 0644
+    owner: www-data
+    group: www-data
+
 - name: Set permissions on Mayan installation
   file:
     path: "{{ venv }}"
