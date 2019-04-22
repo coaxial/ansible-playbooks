@@ -7,3 +7,4 @@ inventory.ini
 downloader/files/subtitles.env
 client_files
 .yo-rc.json
+!edms/files/edms.key
