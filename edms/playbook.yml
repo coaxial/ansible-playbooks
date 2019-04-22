@@ -4,6 +4,7 @@
   gather_facts: false
   vars_files:
     - vars.yml
+    - vars/vars.yml
 
   # bootstrap python2
   pre_tasks:

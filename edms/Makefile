@@ -1,6 +1,6 @@
 limit ?= edms
 verbosity ?=
-.PHONY: all install_reqs playbook_run clean limit_info editvars
+.PHONY: all install_reqs playbook_run clean limit_info editvars decrypt_var
 
 all: limit_info playbook_run
 
@@ -34,3 +34,6 @@ playbook_run: .vault_pass install_reqs
 
 clean:
 	@-rm -f .vault_pass
+
+decrypt_var:
+	@yq read vars.yml $(var) | ansible-vault decrypt --vault-password-file .vault_pass
