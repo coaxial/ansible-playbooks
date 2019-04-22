@@ -1,0 +1,29 @@
+---
+- debug:
+    msg: "Upgrading within 2.7 series"
+
+- name: Stop Mayan if running
+  service:
+    name: supervisor
+    state: stopped
+  notify: restart supervisor
+
+- name: Install Mayan EDMS
+  pip:
+    virtualenv: "{{ venv }}"
+    virtualenv_python: python2.7
+    name:
+      - mayan-edms
+    version: "{{ mayan_target_version }}"
+    state: present
+  when: current_mayan_version
+  register: install_edms
+
+- name: Upgrade existing database
+  shell: ". {{ venv }}/bin/activate && mayan-edms.py performupgrade"
+  when: install_edms.changed
+
+- name: Collect static files
+  become: true
+  shell: ". {{ venv }}/bin/activate && mayan-edms.py collectstatic --noinput"
+  when: install_edms.changed

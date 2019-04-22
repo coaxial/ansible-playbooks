@@ -1,0 +1,224 @@
+---
+- name: Stop Mayan if running
+  service:
+    name: supervisor
+    state: stopped
+
+- name: Install dependencies
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - gcc
+    - ghostscript
+    - gnupg
+    - graphviz
+    - libjpeg-dev
+    - libmagic1
+    - libpng-dev
+    - libpq-dev
+    - libreoffice
+    - libtiff-dev
+    - nginx
+    - poppler-utils
+    - postgresql
+    - postgresql-client-common
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - redis-server
+    - supervisor
+    - tesseract-ocr
+
+- name: Install extra OCR languages
+  package:
+    name: "tesseract-ocr-{{ item }}"
+    state: latest
+  with_items: "{{ ocr_languages }}"
+
+- name: Install Mayan EDMS
+  pip:
+    virtualenv: "{{ venv }}"
+    virtualenv_python: python2.7
+    name:
+      - mayan-edms
+    version: "{{ mayan_target_version }}"
+    state: present
+  when: current_mayan_version
+  register: install_edms
+
+- name: Install pip packages
+  pip:
+    virtualenv: "{{ venv }}"
+    virtualenv_python: python2.7
+    state: latest
+    name:
+      - psycopg2
+      - redis
+      - uwsgi
+
+- name: Install psycopg2 globally
+  # this is required for the postgres modules, and it has to be installed
+  # outside of the venv for ansible to find it
+  pip:
+    name: psycopg2
+    state: latest
+
+- name: Create postgres user
+  become_user: postgres
+  postgresql_user:
+    name: mayan
+    # TODO use vault
+    password: "{{ postgres_password }}"
+
+- name: Create postgres database
+  become_user: postgres
+  postgresql_db:
+    name: mayan
+    owner: mayan
+
+- name: Create logs directory
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ mayan_log_dir }}"
+    - "{{ uswgi_log_dir }}"
+
+- name: Symlink mayan to venv
+  file:
+    dest: "{{ venv }}/mayan"
+    src: "{{ mayan_install_dir }}/mayan"
+    state: link
+
+- name: Create initial mayan settings file
+  become: true
+  shell: ". {{ venv }}/bin/activate && mayan-edms.py createsettings"
+  args:
+    creates: "{{ mayan_install_dir }}/mayan/settings/local.py"
+
+- name: Setup Mayan <-> Postgres connection
+  blockinfile:
+    path: "{{ mayan_install_dir }}/mayan/settings/local.py"
+    block: |
+      DATABASES = {
+          'default': {
+              'ENGINE': 'django.db.backends.postgresql_psycopg2',
+              'NAME': 'mayan',
+              'USER': 'mayan',
+              'PASSWORD': '{{ postgres_password }}',
+              'HOST': 'localhost',
+              'PORT': '5432',
+          }
+      }
+
+      BROKER_URL = 'redis://127.0.0.1:6379/0'
+      CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+
+- name: Initialize/migrate database
+  become: true
+  shell: ". {{ venv }}/bin/activate && mayan-edms.py initialsetup"
+  when: install_edms.changed
+
+- name: Disable default nginx website
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: Create uwsgi config file
+  template:
+    src: templates/uwsgi.ini.j2
+    dest: "{{ venv }}/uwsgi.ini"
+    mode: 0644
+  notify: restart supervisor
+
+- name: Create nginx site file for Mayan
+  template:
+    src: templates/mayan.j2
+    dest: /etc/nginx/sites-available/mayan
+    mode: 0644
+  notify: restart nginx
+
+- name: Enable Mayan in nginx
+  file:
+    src: /etc/nginx/sites-available/mayan
+    path: /etc/nginx/sites-enabled/mayan
+    state: link
+  notify: restart nginx
+
+- name: Create supervisor files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - src: templates/mayan-uwsgi.conf.j2
+      dest: /etc/supervisor/conf.d/mayan-uwsgi.conf
+    - src: templates/mayan-celery.conf.j2
+      dest: /etc/supervisor/conf.d/mayan-celery.conf
+  notify: restart supervisor
+
+- name: Collect static files
+  become: true
+  shell: ". {{ venv }}/bin/activate && mayan-edms.py collectstatic --noinput"
+  when: install_edms.changed
+
+- name: Create document storage directory
+  # tarsnapper will fail the backup if there are no documents in Mayan
+  # because that directory won't exist but will be in tarnsapper.yml
+  file:
+    path: "{{ venv }}/mayan/media/document_storage"
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: www-data
+
+- name: Put a dummy file in document storage directory
+  # tarsnapper will fail the backup if there are no documents in Mayan
+  # because that directory won't exist but will be in tarnsapper.yml
+  copy:
+    dest: "{{ venv }}/mayan/media/document_storage/.keep"
+    content: ''
+    mode: 0644
+    owner: www-data
+    group: www-data
+
+- name: Create document cache directory
+  # tarsnapper will fail the backup if there are no documents in Mayan
+  # because that directory won't exist but will be in tarnsapper.yml
+  file:
+    path: "{{ venv }}/mayan/media/document_cache"
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: www-data
+
+- name: Put a dummy file in document cache directory
+  # tarsnapper will fail the backup if there are no documents in Mayan
+  # because that directory won't exist but will be in tarnsapper.yml
+  copy:
+    dest: "{{ venv }}/mayan/media/document_storage/.keep"
+    content: ''
+    mode: 0644
+    owner: www-data
+    group: www-data
+
+- name: Set permissions on Mayan installation
+  file:
+    path: "{{ venv }}"
+    owner: www-data
+    group: www-data
+    recurse: true
+
+- name: Set permissions on Mayan's lockfile
+  file:
+    path: /tmp/mayan_locks.tmp
+    mode: 0644
+    owner: www-data
+    group: www-data
+
+- name: Open firewall port
+  ufw:
+    rule: allow
+    port: www
