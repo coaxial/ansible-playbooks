@@ -1,9 +1,0 @@
----
-- name: collect tarsnap key
-  command: cat /root/tarsnap.key
-  register: tarsnap__key
-
-- name: print tarsnap key
-  debug:
-    msg: "Save the tarsnap key somewhere safe: {{ tarsnap__key.stdout }}"
-
