@@ -3,11 +3,13 @@
   become: true
   vars:
     rds__src_repo: https://github.com/coaxial/docker-downloader.git
-    rds__src_repo_version: deploy
+    rds__src_repo_version: master
     downloader__media_path: /media/storage/nas
     downloader__scratch_path: /media/scratch/downloader
     downloader__tarsnap_key_path: ./files/tarsnap.key
     downloader__tarsnap_key_dest: /opt/docker-downloader/files/
+  vars_files:
+    - vars/vars.yml
 
   pre_tasks:
     - name: Ensure required directories exist for the docker volumes
@@ -23,10 +25,19 @@
         - src: "{{ downloader__scratch_path }}"
           dest: /srv/downloads
 
-    - name: Copy env file
-      copy:
-        src: files/subtitles.env
-        dest: /opt/docker-downloader/subtitles.env
+    - name: Copy env files
+      template:
+        src: "files/{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: 0600
+      with_items:
+        - src: subtitles.env.j2
+          dest: /opt/docker-downloader/subtitles.env
+        - src: docker-downloader.env.j2
+          dest: /opt/docker-downloader/.env
+      register: env_files
 
   roles:
     - ../deploy-docker-service
@@ -40,12 +51,21 @@
         group: root
         mode: 0600
 
-    # nginx returns 502 for some services if it isn't destroyed and rebuilt
-    - name: Destroy and rebuild proxy container
+    - name: Rebuild services
       docker_service:
         project_src: "{{ dest_path }}"
         services:
+          - series
+          - movies
+          - nzb
+          - torrent
+          - torrent_aggregator
+          - nzb_aggregator
+          - subtitles
           - proxy
-        recreate: always
+        pull: true
+        build: "{{ rds__build | default('true') }}"
+        nocache: true
+        recreate: smart
         state: present
-      when: rds__files_copied.changed or rds__git_clone.changed
+      # when: rds__files_copied.changed or rds__git_clone.changed or env_files.changed
