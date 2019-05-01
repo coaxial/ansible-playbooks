@@ -22,6 +22,8 @@
           dest: /srv/tv_shows
         - src: "{{ downloader__media_path }}/Movies"
           dest: /srv/movies
+        - src: "{{ downloader__media_path }}/Music"
+          dest: /srv/music
         - src: "{{ downloader__scratch_path }}"
           dest: /srv/downloads
 
