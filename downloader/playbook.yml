@@ -70,4 +70,42 @@
         nocache: true
         recreate: smart
         state: present
-      # when: rds__files_copied.changed or rds__git_clone.changed or env_files.changed
+      # The docker module is flaky and fails fetching images the first time
+      # it's run with a newer tag...
+      register: task_result
+      retries: 3
+      until: task_result is not failed
+      when: rds__files_copied.changed or rds__git_clone.changed or env_files.changed
+
+    - name: Access services
+      uri:
+        url: "http://{{ host_ip }}/{{ item.path }}"
+        return_content: true
+      register: access_services
+      retries: 5
+      delay: 10
+      until: access_services is not failed
+      with_items:
+        - path: aggregator/nzb
+          title: NZB Hydra
+        - path: aggregator/torrent
+          title: Jackett
+        - path: movies
+          title: Radarr
+        - path: music
+          title: Lidarr
+        - path: nzb
+          title: NZBGet
+        - path: series
+          title: Sonarr
+        - path: torrent
+          title: Transmission Web Interface
+
+    - name: Ensure services are accessible
+      assert:
+        that: item.item.title in item.content
+        fail_msg: "{{ item.item.title }} doesn't seem to be running properly."
+        success_msg: "{{ item.item.title }} is up and running."
+      loop: "{{ access_services.results|flatten(levels=1) }}"
+      loop_control:
+        label: "{{ item.item.title }}"
