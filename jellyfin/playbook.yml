@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/enc_vars.yml
+    - vars/vars.yml
+  handlers:
+    - include: handlers/main.yml
+  tasks:
+    - name: Install Jellyfin
+      include_role:
+        name: "{{ role }}"
+      with_items:
+        - coaxial.base
+        - coaxial.jellyfin
+      loop_control:
+        loop_var: role
+
+    - name: Open port
+      iptables:
+        chain: INPUT
+        destination_port: "{{ jellyfin__port }}"
+        protocol: tcp
+        jump: ACCEPT
+        comment: Allow Jellyfin traffic
