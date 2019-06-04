@@ -16,6 +16,12 @@
       loop_control:
         loop_var: role
 
+    - name: Let jellyfin use the GPU
+      user:
+        name: jellyfin
+        append: true
+        groups: video
+
     - name: Open port
       iptables:
         chain: INPUT
