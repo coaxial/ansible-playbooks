@@ -12,6 +12,8 @@ Configure users in the `znc__users` variable and then connect to ZNC using that 
 
 Instructions to generate a certificate: https://wiki.znc.in/Cert
 
+`openssl req -nodes -newkey rsa:4096 -keyout user.pem -x509 -days 3650 -out user.pem -subj "/CN=YourNickname"`
+
 # Sample `znc__users`
 
 ```yaml
@@ -24,5 +26,5 @@ znc__users:
     pubkey: 'ffffffffffffffffffffffffffffffffffffffff'
     networks:
       - name: freenode
-        clientcert: '~/.irssi/certs/user.pem'
+        clientcert: '~/.irssi/certs/user.pem' # path to cert on the controller
 ```
