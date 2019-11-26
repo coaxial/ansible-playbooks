@@ -10,6 +10,8 @@ Install and configure ZNC, the IRC bouncer
 
 Configure users in the `znc__users` variable and then connect to ZNC using that user's certificate for passwordless auth.
 
+Instructions to generate a certificate: https://wiki.znc.in/Cert
+
 # Sample `znc__users`
 
 ```yaml
