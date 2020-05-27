@@ -3,7 +3,7 @@ sudo: required
 language: python
 python: "2.7"
 env:
-  - distro: ubuntu1604
+  - distro: ubuntu1804
     init: /lib/systemd/systemd
     run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
     ANSIBLE_ROLES_PATH: '/etc/ansible/roles'
