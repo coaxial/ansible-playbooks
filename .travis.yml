@@ -3,7 +3,7 @@ sudo: required
 language: python
 python: "2.7"
 env:
-  - distro: ubuntu1604
+  - distro: ubuntu1804
     init: /lib/systemd/systemd
     run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
     ANSIBLE_ROLES_PATH: '/etc/ansible/roles'
@@ -13,7 +13,7 @@ services:
 
 before_install:
   - 'docker pull geerlingguy/docker-${distro}-ansible:latest'
-  - 'echo ${ANSIBLE_VAULT_PASSWORD} > "${PWD}"/.vault_pass'
+  - 'echo ${ANSIBLE_MAINFRAME_VAULT_PASSWORD} > "${PWD}"/mainframe/.vault_pass'
   - 'echo ${ANSIBLE_EDMS_VAULT_PASSWORD} > "${PWD}"/edms/.vault_pass'
   - 'mv "${PWD}/restore-vm/vm_list.yml.example" "${PWD}/restore-vm/vm_list.yml"'
   - 'touch "${PWD}/restore-vm/dummy_{1,2}.{xml,img}"'
@@ -25,7 +25,7 @@ script:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-galaxy install -r /etc/ansible/playbooks/edms/requirements.yml'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-galaxy install -r /etc/ansible/playbooks/munin/requirements.yml'
   # verify syntax
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ANSIBLE_VAULT_PASSWORD_FILE=/etc/ansible/playbooks/.vault_pass ansible-playbook /etc/ansible/playbooks/mainframe/playbook.yml --syntax-check'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ANSIBLE_VAULT_PASSWORD_FILE=/etc/ansible/playbooks/mainframe/.vault_pass ansible-playbook /etc/ansible/playbooks/mainframe/playbook.yml --syntax-check'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/restore-vm/playbook.yml --syntax-check'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/create-vm/playbook.yml --syntax-check'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/playbooks/delete-vm/playbook.yml --syntax-check'
