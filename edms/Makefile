@@ -13,8 +13,8 @@ install_reqs:
 		ansible-galaxy install -r requirements.yml --force; \
 	fi
 
-# ask user for vault pass and save it with mode 0600, unless it's already saved.
 .vault_pass:
+	@# ask user for vault pass and save it with mode 0600, unless it's already saved.
 	@stty -echo; \
 	read -p ".vault_pass missing, enter vault password: " vpwd; \
 	stty echo; \
@@ -39,7 +39,7 @@ decrypt_var:
 	@yq read vars.yml $(var) | ansible-vault decrypt --vault-password-file .vault_pass
 
 list-backups:
-	# Decrypt the key, save it to a ramdisk, list backups, and delete key
+	@# Decrypt the key, save it to a ramdisk, list backups, and delete key
 	@sudo umount /tmp/tarsnap-key 2>/dev/null;\
 	rmdir /tmp/tarsnap-key 2>/dev/null;\
 	mkdir /tmp/tarsnap-key &&\
@@ -50,6 +50,6 @@ list-backups:
 	tarsnap \
 		--list-archives \
 		--keyfile /tmp/tarsnap-key/tarsnap.key | sort;\
-	head -c 1M < /dev/urandom > /tmp/tarsnap-key/tarsnap.key;\
+	shred /tmp/tarsnap-key/tarsnap.key;\
 	sudo umount /tmp/tarsnap-key &&\
 	rmdir /tmp/tarsnap-key
