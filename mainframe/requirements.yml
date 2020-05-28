@@ -1,7 +1,7 @@
 ---
 - src: coaxial.raw-python
 - src: coaxial.base
-  version: 1.2.1
+  version: v1.2.1
 - src: coaxial.lxd
 - src: angstwad.docker_ubuntu
 - src: coaxial.create-lxd-container
