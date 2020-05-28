@@ -4,6 +4,6 @@
   version: v1.2.1
 - src: coaxial.lxd
 - src: angstwad.docker_ubuntu
-- src: coaxial.create-lxd-container
+- src: coaxial.create_lxd_container
 - src: coaxial.firewall_rule
 - src: coaxial.node_exporter
