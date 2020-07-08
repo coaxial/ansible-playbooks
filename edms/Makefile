@@ -53,3 +53,7 @@ list-backups:
 	shred /tmp/tarsnap-key/tarsnap.key;\
 	sudo umount /tmp/tarsnap-key &&\
 	rmdir /tmp/tarsnap-key
+
+list-backups-with-size:
+	@# Must run the command on the target because it needs the cache dir
+	@ssh user@edms.lan "sudo tarsnap --print-stats -f '*'"
