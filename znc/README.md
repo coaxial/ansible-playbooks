@@ -16,11 +16,18 @@ Configure users in the `znc__users` variable and then connect to ZNC using that 
 znc__users:
   - username: 1972_bob_dylan
     nick: bd
-    password: 'secret'
-    salt: 'salty'
+    password: "secret"
+    salt: "salty"
     # get fingerprint with `openssl x509 -fingerprint -noout -in /path/to/cert.pem | cut -f2 -d '=' | tr -d ':' | tr '[:upper:]' '[:
-    pubkey: 'ffffffffffffffffffffffffffffffffffffffff'
+    pubkey: "ffffffffffffffffffffffffffffffffffffffff"
     networks:
-      - name: freenode
-        clientcert: '~/.irssi/certs/user.pem'
+      - name: libera
+        altnick: snakeprime # optional, defaults to nick + '_'
+        clientcert: "~/.irssi/certs/user.pem" # optional
+        encoding: UTF-8 # optional, defaults to UTF-8
+        ident: THE snake # optional, defaults to nick
+        nick: snake
+        realname: Snako # optional, defaults to nick
+        sasl: true # optional, default is false
+        server: "irc.libera.chat +7000"
 ```
