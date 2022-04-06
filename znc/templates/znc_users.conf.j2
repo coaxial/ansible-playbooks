@@ -14,6 +14,13 @@
 
   {% for network in user.networks -%}
   <Network {{ network.name }}>
+    {% if network.nick is defined and network.nick -%}
+    AltNick = {{ network.altnick | default(network.nick + '_') }}
+    {% endif -%}
+    {% if network.ident is defined and network.ident -%}
+    Ident = {{ network.ident }}
+    {% endif -%}
+    Encoding = {{ network.encoding | default('UTF-8') }}
     IRCConnectEnabled = true
     {% if network.sasl is defined and network.sasl -%}
     LoadModule = sasl
@@ -21,7 +28,13 @@
     {% if network.clientcert is defined and network.clientcert -%}
     LoadModule = cert
     {% endif -%}
-    Server = chat.freenode.net +7000
+    {% if network.nick is defined and network.nick -%}
+    Nick = {{ network.nick }}
+    {% endif -%}
+    {% if network.nick is defined and network.nick -%}
+    RealName = {{ network.realname | default(network.nick) }}
+    {% endif -%}
+    Server = {{ network.server }}
   </Network>
   {% endfor -%}
 </User>
