@@ -5,6 +5,13 @@
     - vars/enc_vars.yml
     - vars/vars.yml
   tasks:
+    - name: Stop ZNC
+      service:
+        name: znc
+        state: stopped
+      notify:
+        - Start ZNC
+
     - name: Install ZNC
       include_role:
         name: "{{ role }}"
@@ -61,6 +68,7 @@
       with_subelements:
         - "{{ znc__users }}"
         - networks
+      when: item.1.clientcert is defined
 
     - name: Open port
       iptables:
@@ -69,3 +77,5 @@
         protocol: tcp
         jump: ACCEPT
         comment: Allow ZNC traffic
+  handlers:
+    - include: handlers/znc.yml

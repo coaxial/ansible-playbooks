@@ -1,0 +1,5 @@
+---
+- name: Start ZNC
+  service:
+    name: znc
+    state: started
