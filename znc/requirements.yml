@@ -6,5 +6,6 @@
 # - src: coaxial.base
 - src: https://github.com/coaxial/ansible-role-base
   name: coaxial.base
+  version: 2.0.1
 - src: https://github.com/coaxial/ansible-role-znc
   name: coaxial.znc
