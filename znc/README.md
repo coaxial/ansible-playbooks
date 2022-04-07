@@ -10,6 +10,10 @@ Install and configure ZNC, the IRC bouncer
 
 Configure users in the `znc__users` variable and then connect to ZNC using that user's certificate for passwordless auth.
 
+# Registering new cert with Libera
+
+To register a new certificate fingerprint (after a fresh install on ZNC for intance), `/msg NickServ identify <nick> <password>` and then `/msg NickServ cert add`.
+
 # Sample `znc__users`
 
 ```yaml
