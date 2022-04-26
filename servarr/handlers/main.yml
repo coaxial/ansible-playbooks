@@ -8,3 +8,13 @@
   ansible.builtin.service:
     name: transmission
     state: started
+
+- name: Start Sonarr
+  ansible.builtin.service:
+    name: sonarr
+    state: started
+
+- name: Start Radarr
+  ansible.builtin.service:
+    name: radarr
+    state: started

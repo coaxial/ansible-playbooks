@@ -1,0 +1,24 @@
+---
+- name: Stop Radarr
+  ansible.builtin.service:
+    name: radarr
+    state: stopped
+  notify:
+    - Start Radarr
+  when: "radarr/{{ item }} is file"
+  with_items:
+    - radarr.db
+    - config.xml
+
+- name: Restore Radarr data
+  ansible.builtin.copy:
+    src: "radarr/{{ item }}"
+    dest: /var/lib/radarr/
+    backup: yes
+    mode: 0644
+    owner: radarr
+    group: radarr
+  when: "radarr/{{ item }} is file"
+  with_items:
+    - radarr.db
+    - config.xml
