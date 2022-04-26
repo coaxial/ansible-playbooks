@@ -9,20 +9,26 @@ Sets up a Servarr instance with:
 
 ## Notes
 
-### nzbget
+### NZBGet
 
-If `files/nzbget/history` and/or `files/nzbget/stats` are present when running
-this role, they will be copied over to the instance and will erase existing
-files. A backup of the original files will be generated. Be careful not to
-overwrite existing data.
+If any of these files exist at `files/nzbget`:
 
-Config must be restored manually, through the GUI (Settings > System > Restore
-Settings)
+- nzbget.conf
+- stats
+- history
+
+They will be copied over existing files on the instance. A backup of the
+original will be generated. Be careful not to overwrite existing data.
+
+`nzbget.conf` should be manually edited beforehand to make sure paths etc. match.
+Another option is to not restore the config file through this playbook, and use
+the GUI instead to selectively restore parts of the config as per these
+instructions: https://nzbget.net/backup-and-restore-settings
 
 Default password is `nzbget`:`tegbnz6789` and the interface is accessible at
 `http://<ip>/nzbget`.
 
-### transmission
+### Transmission
 
 If any of these files exist at `files/transmission`:
 
@@ -36,3 +42,6 @@ If any of these files exist at `files/transmission`:
 
 They will be copied over existing files on the instance. A backup of the
 original will be generated. Be careful not to overwrite existing data.
+
+The interface is accessible at `http://<ip>/transmission` (note the absence of
+the trailing `/`).

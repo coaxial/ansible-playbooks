@@ -14,6 +14,7 @@
   ansible.builtin.copy:
     src: "transmission/{{ item.filename }}"
     dest: "/home/debian-transmission/.config/transmission-daemon/{{ item.filename }}"
+    backup: yes
     mode: "{{ item.mode }}"
     owner: debian-transmission
     group: debian-transmission

@@ -18,3 +18,13 @@
     - history
     - stats
   when: "nzbget/{{ item }} is file"
+
+- name: Restore config file (if any)
+  ansible.builtin.copy:
+    src: nzbget/nzbget.conf
+    dest: /etc/nzbget.conf
+    backup: yes
+    mode: 0644
+    owner: nzbget
+    group: nzbget
+  when: "nzbget/nzbget.conf is file"
