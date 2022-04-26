@@ -1,0 +1,20 @@
+- name: Stop NZBGet
+  ansible.builtin.service:
+    name: nzbget
+    state: stopped
+  notify:
+    - Start NZBGet
+  when: "(nzbget/history is file) or (nzbget/stats is file)"
+
+- name: Restore history and stats files (if any)
+  ansible.builtin.copy:
+    src: "nzbget/{{ item }}"
+    dest: "{{ nzb_downloads_dir }}/data/queue"
+    backup: yes
+    mode: 0644
+    owner: nzbget
+    group: nzbget
+  with_items:
+    - history
+    - stats
+  when: "nzbget/{{ item }} is file"

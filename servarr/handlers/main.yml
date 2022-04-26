@@ -1,0 +1,10 @@
+---
+- name: Start NZBGet
+  ansible.builtin.service:
+    name: nzbget
+    state: started
+
+- name: Start Transmission
+  ansible.builtin.service:
+    name: transmission
+    state: started

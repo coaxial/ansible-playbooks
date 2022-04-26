@@ -1,0 +1,34 @@
+---
+- name: Stop Transmission
+  ansible.builtin.service:
+    name: transmission
+    state: stopped
+  when: "transmission/{{ item }} is a file"
+  with_items:
+    - stats.json
+    - settings.json
+  notify:
+    - Start Transmission
+
+- name: Restore Transmission settings etc.
+  ansible.builtin.copy:
+    src: "transmission/{{ item.filename }}"
+    dest: "/home/debian-transmission/.config/transmission-daemon/{{ item.filename }}"
+    mode: "{{ item.mode }}"
+    owner: debian-transmission
+    group: debian-transmission
+  with_items:
+    - filename: stats.json
+      mode: 0600
+    - filename: settings.json
+      mode: 0600
+    - filename: dht.dat
+      mode: 0600
+    - filename: blocklist-update.sh
+      mode: 0700
+    - filename: torrents
+      mode: 0700
+    - filename: resume
+      mode: 0700
+    - filename: blocklists
+      mode: 0700

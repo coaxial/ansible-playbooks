@@ -1,0 +1,17 @@
+---
+- name: "Get stats for required dirs"
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: st
+  with_items:
+    - "{{ pvr_downloads_dir }}"
+    - "{{ other_downloads_dir }}"
+    - "{{ music_downloads_dir }}"
+    - "{{ torrent_incomplete_downloads_dir }}/nzb"
+    - "{{ nzb_incomplete_downloads_dir }}/torrent"
+
+- name: "Assert that required dirs exists"
+  ansible.builtin.fail:
+    msg: "dir {{ iten.stat }} missing, check VM/container config"
+  when: not item.stat.exists
+  with_items: "{{ st.results }}"
