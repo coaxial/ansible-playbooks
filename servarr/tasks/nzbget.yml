@@ -1,30 +1,89 @@
+- name: debug
+  debug:
+    var: files_dir
+
+- name: debug
+  debug:
+    var: playbook_dir
+
+- name: debug
+  debug:
+    msg: "{{ item }}"
+  with_first_found:
+    files: "{{ files_dir }}/nzbget/nzbget.conf"
+    skip: True
+
+- name: check for NZBGet files
+  delegate_to: localhost
+  stat:
+    path: "{{ files_dir }}/nzbget/{{ item }}"
+  register: nf
+  ignore_errors: True
+  with_items:
+    - stats
+    - history
+
+- name: Check for NZBGet config file
+  delegate_to: localhost
+  stat:
+    path: "{{ files_dir }}/nzbget/{{ item }}"
+  register: nc
+  ignore_errors: True
+  with_items:
+    - nzbget.conf
+
+- name: debug
+  debug:
+    var: nc
+
 - name: Stop NZBGet
   ansible.builtin.service:
     name: nzbget
     state: stopped
   notify:
     - Start NZBGet
-  when: "(nzbget/history is file) or (nzbget/stats is file)"
+  # when: "({{ playbook_dir }}/files/nzbget/history is file) or ({{ playbook_dir }}/files/nzbget/stats is file)"
+  # with_first_found:
+  #   files:
+  #     - nzbget/history
+  #     - nzbget/stats
+  #   skip: True
+  when: item.stat.exists
+  with_items:
+    - "{{ nf.results }}"
+    - "{{ nc.results }}"
 
 - name: Restore history and stats files (if any)
   ansible.builtin.copy:
-    src: "nzbget/{{ item }}"
-    dest: "{{ nzb_downloads_dir }}/data/queue"
+    src: "{{ item.stat.path }}"
+    dest: "{{ nzb_downloads_dir }}/data/queue/{{ item.item | basename }}"
     backup: yes
     mode: 0644
     owner: nzbget
     group: nzbget
-  with_items:
-    - history
-    - stats
-  when: "nzbget/{{ item }} is file"
+  # with_first_found:
+  #   files:
+  #     - nzbget/history
+  #     - nzbget/stats
+  #   skip: True
+  when: item.stat.exists
+  with_items: "{{ nf.results }}"
 
 - name: Restore config file (if any)
   ansible.builtin.copy:
-    src: nzbget/nzbget.conf
-    dest: /etc/nzbget.conf
+    src: "{{ item.stat.path }}"
+    dest: "/etc/{{ item.item | basename }}"
     backup: yes
     mode: 0644
     owner: nzbget
     group: nzbget
-  when: "nzbget/nzbget.conf is file"
+  # Using with_first_found so that it will look for the file in the right
+  # places (i.e. the files/ directory for the playbook). Along with `skip:
+  # True`, this makes the loop skip the task when the file doesn't exist on the
+  # controller.
+  # with_first_found:
+  #   files:
+  #     - nzbget/nzbget.conf
+  #   skip: True
+  when: item.stat.exists
+  with_items: "{{ nc.results }}"

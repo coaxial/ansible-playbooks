@@ -4,19 +4,16 @@
   vars_files:
     - vars/vars.yml
     - vars/enc_vars.yml
-
-  roles:
-    - coaxial.base
-    - coaxial.servarr
-
+  handlers:
+    - include_tasks: handlers/main.yml
+  # roles:
+  #   - coaxial.base
+  #   - coaxial.servarr
   pre_tasks:
     - include_tasks: tasks/dirs.yml
   tasks:
     - include_tasks: tasks/nzbget.yml
-    - include_tasks: tasks/transmission.yml
-    - include_tasks: tasks/sonarr.yml
-    - include_tasks: tasks/radarr.yml
-    - include_tasks: tasks/backup.yml
-
-  handlers:
-    - include_tasks: handlers/main.yml
+    # - include_tasks: tasks/transmission.yml
+    # - include_tasks: tasks/sonarr.yml
+    # - include_tasks: tasks/radarr.yml
+    # - include_tasks: tasks/backup.yml

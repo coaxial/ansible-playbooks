@@ -1,0 +1,21 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  vars_files:
+    - ../../vars/vars.yml
+    - ../../vars/enc_vars.yml
+  tasks:
+    - name: Create download dirs (normally mounted inside container)
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: 1100 # ID for media, which doesn't exist yet
+        group: 1100 # ID for media, which doesn't exist yet
+        mode: 0775
+      with_items:
+        - "{{ pvr_downloads_dir }}"
+        - "{{ other_downloads_dir }}"
+        - "{{ music_downloads_dir }}"
+        - "{{ torrent_downloads_dir }}"
+        - "{{ nzb_downloads_dir }}/data/queue"

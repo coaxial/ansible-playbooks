@@ -1,6 +1,7 @@
 ---
 - name: Converge
   hosts: all
+
   tasks:
     - name: Update apt cache
       ansible.builtin.apt:
@@ -8,3 +9,5 @@
         cache_valid_time: 3600
 
 - import_playbook: ../../playbook.yml
+  vars:
+    files_dir_prefix: "molecule/default/files"

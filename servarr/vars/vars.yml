@@ -6,3 +6,4 @@ nzb_downloads_dir: "{{ enc__nzb_downloads_dir }}"
 torrent_downloads_dir: "{{ enc__torrent_downloads_dir }}"
 watch_dir: "{{ enc__watch_dir }}"
 servarr_group: media
+files_dir: "{{ files_dir_prefix | default('.') }}"
