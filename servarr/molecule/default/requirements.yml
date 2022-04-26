@@ -1,0 +1,4 @@
+---
+roles:
+  - coaxial.base
+  - coaxial.servarr
