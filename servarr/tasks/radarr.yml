@@ -17,10 +17,8 @@
     - Start Radarr
   when: item.stat.exists
   with_items: "{{ rf.results }}"
-  # when: "radarr/{{ item }} is file"
-  # with_items:
-  #   - radarr.db
-  #   - config.xml
+  tags:
+    - molecule-idempotence-notest
 
 - name: Restore Radarr data
   ansible.builtin.copy:
@@ -34,7 +32,5 @@
   ignore_errors: True
   when: item.stat.exists
   with_items: "{{ sf.results }}"
-  # when: "radarr/{{ item }} is file"
-  # with_items:
-  #   - radarr.db
-  #   - config.xml
+  tags:
+    - molecule-idempotence-notest

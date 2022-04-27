@@ -34,3 +34,6 @@ playbook_run: .vault_pass install_reqs
 
 clean:
 	@-rm -f .vault_pass
+
+test:
+	@PY_COLORS=1 molecule test

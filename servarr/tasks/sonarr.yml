@@ -20,13 +20,8 @@
     - Start Sonarr
   when: item.stat.exists
   with_items: "{{ tf.results }}"
-  # when: "sonarr/{{ item }} is file"
-  # with_items:
-  #   - sonarr.db
-  #   - sonarr.db-journal
-  #   - nzbdrone.db
-  #   - nzbdrone.db-journal
-  #   - config.xml
+  tags:
+    - molecule-idempotence-notest
 
 - name: Restore Sonarr data
   ansible.builtin.copy:
@@ -39,10 +34,5 @@
   ignore_errors: True
   when: item.stat.exists
   with_items: "{{ sf.results }}"
-  # when: "sonarr/{{ item }} is file"
-  # with_items:
-  #   - sonarr.db
-  #   - sonarr.db-journal
-  #   - nzbdrone.db
-  #   - nzbdrone.db-journal
-  #   - config.xml
+  tags:
+    - molecule-idempotence-notest

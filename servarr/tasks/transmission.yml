@@ -21,6 +21,8 @@
   when: item.stat.exists
   with_items: "{{ tf.results }}"
   notify: Start Transmission
+  tags:
+    - molecule-idempotence-notest
 
 - name: Restore Transmission settings etc.
   ansible.builtin.copy:
@@ -31,6 +33,8 @@
     group: debian-transmission
   when: item.stat.exists
   with_items: "{{ tf.results }}"
+  tags:
+    - molecule-idempotence-notest
 
 - name: Set Transmission settings permissions
   ansible.builtin.file:
@@ -52,3 +56,5 @@
       mode: "0700"
     - filename: blocklists
       mode: "0700"
+  tags:
+    - molecule-idempotence-notest

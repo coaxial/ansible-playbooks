@@ -7,8 +7,8 @@
   handlers:
     - include: handlers/main.yml
   roles:
-    # - coaxial.base
-    # - coaxial.servarr
+    - coaxial.base
+    - coaxial.servarr
   pre_tasks:
     - include: tasks/dirs.yml
   tasks:

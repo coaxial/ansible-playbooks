@@ -6,7 +6,8 @@ driver:
 lint: |
   set -e
   yamllint .
-  ansible-lint
+  # ansible-lint can't deal with vault passwords
+  ansible-playbook --syntax-check --vault-password-file .vault_pass playbook.yml
   flake8
 platforms:
   - name: ${MOLECULE_DISTRO:-ubuntu2004}
@@ -22,3 +23,18 @@ provisioner:
     vault_password_file: .vault_pass
 verifier:
   name: testinfra
+scenario:
+  test_sequence:
+    - dependency
+    - lint
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy

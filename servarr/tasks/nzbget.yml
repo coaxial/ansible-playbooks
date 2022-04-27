@@ -22,16 +22,12 @@
     name: nzbget
     state: stopped
   notify: Start NZBGet
-  # when: "({{ playbook_dir }}/files/nzbget/history is file) or ({{ playbook_dir }}/files/nzbget/stats is file)"
-  # with_first_found:
-  #   files:
-  #     - nzbget/history
-  #     - nzbget/stats
-  #   skip: True
   when: item.stat.exists
   with_items:
     - "{{ nf.results }}"
     - "{{ nc.results }}"
+  tags:
+    - molecule-idempotence-notest
 
 - name: Restore history and stats files (if any)
   ansible.builtin.copy:
@@ -41,13 +37,10 @@
     mode: 0644
     owner: nzbget
     group: nzbget
-  # with_first_found:
-  #   files:
-  #     - nzbget/history
-  #     - nzbget/stats
-  #   skip: True
   when: item.stat.exists
   with_items: "{{ nf.results }}"
+  tags:
+    - molecule-idempotence-notest
 
 - name: Restore config file (if any)
   ansible.builtin.copy:
@@ -57,13 +50,7 @@
     mode: 0644
     owner: nzbget
     group: nzbget
-  # Using with_first_found so that it will look for the file in the right
-  # places (i.e. the files/ directory for the playbook). Along with `skip:
-  # True`, this makes the loop skip the task when the file doesn't exist on the
-  # controller.
-  # with_first_found:
-  #   files:
-  #     - nzbget/nzbget.conf
-  #   skip: True
   when: item.stat.exists
   with_items: "{{ nc.results }}"
+  tags:
+    - molecule-idempotence-notest
