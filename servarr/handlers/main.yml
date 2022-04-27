@@ -6,7 +6,7 @@
 
 - name: Start Transmission
   ansible.builtin.service:
-    name: transmission
+    name: transmission-daemon
     state: started
 
 - name: Start Sonarr

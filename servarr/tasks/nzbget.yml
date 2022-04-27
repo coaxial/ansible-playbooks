@@ -1,18 +1,3 @@
-- name: debug
-  debug:
-    var: files_dir
-
-- name: debug
-  debug:
-    var: playbook_dir
-
-- name: debug
-  debug:
-    msg: "{{ item }}"
-  with_first_found:
-    files: "{{ files_dir }}/nzbget/nzbget.conf"
-    skip: True
-
 - name: check for NZBGet files
   delegate_to: localhost
   stat:
@@ -32,16 +17,11 @@
   with_items:
     - nzbget.conf
 
-- name: debug
-  debug:
-    var: nc
-
 - name: Stop NZBGet
   ansible.builtin.service:
     name: nzbget
     state: stopped
-  notify:
-    - Start NZBGet
+  notify: Start NZBGet
   # when: "({{ playbook_dir }}/files/nzbget/history is file) or ({{ playbook_dir }}/files/nzbget/stats is file)"
   # with_first_found:
   #   files:
