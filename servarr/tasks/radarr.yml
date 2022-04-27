@@ -1,24 +1,40 @@
 ---
+- name: Check for Radarr files
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ files_dir }}/sonarr/{{ item }}"
+  register: rf
+  ignore_errors: True
+  with_items:
+    - radarr.db
+    - config.xml
+
 - name: Stop Radarr
   ansible.builtin.service:
     name: radarr
     state: stopped
   notify:
     - Start Radarr
-  when: "radarr/{{ item }} is file"
-  with_items:
-    - radarr.db
-    - config.xml
+  when: item.stat.exists
+  with_items: "{{ rf.results }}"
+  # when: "radarr/{{ item }} is file"
+  # with_items:
+  #   - radarr.db
+  #   - config.xml
 
 - name: Restore Radarr data
   ansible.builtin.copy:
-    src: "radarr/{{ item }}"
+    # src: "radarr/{{ item }}"
+    src: "{{ item.stat.path }}"
     dest: /var/lib/radarr/
     backup: yes
     mode: 0644
     owner: radarr
-    group: radarr
-  when: "radarr/{{ item }} is file"
-  with_items:
-    - radarr.db
-    - config.xml
+    group: media
+  ignore_errors: True
+  when: item.stat.exists
+  with_items: "{{ sf.results }}"
+  # when: "radarr/{{ item }} is file"
+  # with_items:
+  #   - radarr.db
+  #   - config.xml
