@@ -24,6 +24,22 @@
   tags:
     - molecule-idempotence-notest
 
+- name: Create service override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/transmission-daemon.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Run Transmission with `media` group
+  ansible.builtin.template:
+    src: transmission/override.conf
+    dest: /etc/systemd/system/transmission-daemon.service.d/override.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Restore Transmission settings etc.
   ansible.builtin.copy:
     src: "{{ item.stat.path }}"
@@ -58,3 +74,27 @@
       mode: "0700"
   tags:
     - molecule-idempotence-notest
+
+- name: Open firewall port
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    match: tcp
+    destination_port: 51413
+    comment: Allow Torrent traffic
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+  notify:
+    - Persist iptables rules
+
+- name: Open firewall port (cont'd)
+  ansible.builtin.iptables:
+    chain: OUTPUT
+    protocol: tcp
+    match: tcp
+    source_port: 51413
+    comment: Allow Torrent traffic
+    ctstate: ESTABLISHED
+    jump: ACCEPT
+  notify:
+    - Persist iptables rules

@@ -10,10 +10,9 @@
     - coaxial.base
     - coaxial.servarr
   pre_tasks:
+    - include: tasks/users.yml
     - include: tasks/dirs.yml
   tasks:
-    - include: tasks/nzbget.yml
     - include: tasks/transmission.yml
-    - include_tasks: tasks/sonarr.yml
-    - include_tasks: tasks/radarr.yml
+    - include: tasks/nzbget.yml
     # - include_tasks: tasks/backup.yml

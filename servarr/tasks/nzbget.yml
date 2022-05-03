@@ -1,56 +1,54 @@
-- name: check for NZBGet files
-  delegate_to: localhost
-  stat:
-    path: "{{ files_dir }}/nzbget/{{ item }}"
-  register: nf
-  ignore_errors: True
-  with_items:
-    - stats
-    - history
+---
+# - name: check for NZBGet files
+#   delegate_to: localhost
+#   stat:
+#     path: "{{ files_dir }}/nzbget/{{ item }}"
+#   register: nf
+#   ignore_errors: True
+#   with_items:
+#     - stats
+#     - history
 
-- name: Check for NZBGet config file
-  delegate_to: localhost
-  stat:
-    path: "{{ files_dir }}/nzbget/{{ item }}"
-  register: nc
-  ignore_errors: True
-  with_items:
-    - nzbget.conf
+# - name: Check for NZBGet config file
+#   delegate_to: localhost
+#   stat:
+#     path: "{{ files_dir }}/nzbget/{{ item }}"
+#   register: nc
+#   ignore_errors: True
+#   with_items:
+#     - nzbget.conf
 
-- name: Stop NZBGet
-  ansible.builtin.service:
-    name: nzbget
-    state: stopped
-  notify: Start NZBGet
-  when: item.stat.exists
-  with_items:
-    - "{{ nf.results }}"
-    - "{{ nc.results }}"
-  tags:
-    - molecule-idempotence-notest
+# - name: Stop NZBGet
+#   ansible.builtin.service:
+#     name: nzbget
+#     state: stopped
+#   notify: Start NZBGet
+#   when: item.stat.exists
+#   with_items:
+#     - "{{ nf.results }}"
+#     # - "{{ nc.results }}"
 
-- name: Restore history and stats files (if any)
-  ansible.builtin.copy:
-    src: "{{ item.stat.path }}"
-    dest: "{{ nzb_downloads_dir }}/data/queue/{{ item.item | basename }}"
-    backup: yes
-    mode: 0644
-    owner: nzbget
-    group: nzbget
-  when: item.stat.exists
-  with_items: "{{ nf.results }}"
-  tags:
-    - molecule-idempotence-notest
-
-- name: Restore config file (if any)
-  ansible.builtin.copy:
-    src: "{{ item.stat.path }}"
-    dest: "/etc/{{ item.item | basename }}"
-    backup: yes
-    mode: 0644
-    owner: nzbget
-    group: nzbget
-  when: item.stat.exists
-  with_items: "{{ nc.results }}"
-  tags:
-    - molecule-idempotence-notest
+# - name: Restore history and stats files (if any)
+#   ansible.builtin.copy:
+#     src: "{{ item.stat.path }}"
+#     dest: "{{ nzb_downloads_dir }}/data/queue/{{ item.item | basename }}"
+#     backup: yes
+#     mode: 0644
+#     owner: nzbget
+#     group: nzbget
+#   when: item.stat.exists
+#   with_items: "{{ nf.results }}"
+#   tags:
+#     - molecule-idempotence-notest
+# - name: Restore config file (if any)
+#   ansible.builtin.copy:
+#     src: "{{ item.stat.path }}"
+#     dest: "/etc/{{ item.item | basename }}"
+#     backup: yes
+#     mode: 0644
+#     owner: nzbget
+#     group: nzbget
+#   when: item.stat.exists
+#   with_items: "{{ nc.results }}"
+#   tags:
+#     - molecule-idempotence-notest

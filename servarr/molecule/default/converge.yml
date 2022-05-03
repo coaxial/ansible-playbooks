@@ -10,4 +10,4 @@
 
 - import_playbook: ../../playbook.yml
   vars:
-    files_dir_prefix: "molecule/default/files"
+    files_dir_prefix: "{{ playbook_dir }}/molecule/default/files"
