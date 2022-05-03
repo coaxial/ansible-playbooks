@@ -1,0 +1,7 @@
+---
+- name: Create media user
+  ansible.builtin.user:
+    name: media
+    uid: 1100
+    shell: /bin/false
+    password: "!"
