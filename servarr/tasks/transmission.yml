@@ -1,0 +1,100 @@
+---
+- name: Check for Transmission files
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ files_dir }}/transmission/{{ item }}"
+  register: tf
+  ignore_errors: True
+  with_items:
+    - stats.json
+    - settings.json
+    - dht.dat
+    - blocklist-update.sh
+    - torrents
+    - resume
+    - blocklists
+
+- name: Stop Transmission
+  ansible.builtin.service:
+    name: transmission-daemon
+    state: stopped
+  when: item.stat.exists
+  with_items: "{{ tf.results }}"
+  notify: Start Transmission
+  tags:
+    - molecule-idempotence-notest
+
+- name: Create service override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/transmission-daemon.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Run Transmission with `media` group
+  ansible.builtin.template:
+    src: transmission/override.conf
+    dest: /etc/systemd/system/transmission-daemon.service.d/override.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restore Transmission settings etc.
+  ansible.builtin.copy:
+    src: "{{ item.stat.path }}"
+    dest: "/home/debian-transmission/.config/transmission-daemon/{{ item.item | basename }}"
+    backup: yes
+    owner: debian-transmission
+    group: debian-transmission
+  when: item.stat.exists
+  with_items: "{{ tf.results }}"
+  tags:
+    - molecule-idempotence-notest
+
+- name: Set Transmission settings permissions
+  ansible.builtin.file:
+    path: "/home/debian-transmission/.config/transmission-daemon/{{ item.filename }}"
+    mode: "{{ item.mode }}"
+  ignore_errors: true # ignore missing files
+  with_items:
+    - filename: stats.json
+      mode: "0600"
+    - filename: settings.json
+      mode: "0600"
+    - filename: dht.dat
+      mode: "0600"
+    - filename: blocklist-update.sh
+      mode: "0700"
+    - filename: torrents
+      mode: "0700"
+    - filename: resume
+      mode: "0700"
+    - filename: blocklists
+      mode: "0700"
+  tags:
+    - molecule-idempotence-notest
+
+- name: Open firewall port
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    match: tcp
+    destination_port: 51413
+    comment: Allow Torrent traffic
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+  notify:
+    - Persist iptables rules
+
+- name: Open firewall port (cont'd)
+  ansible.builtin.iptables:
+    chain: OUTPUT
+    protocol: tcp
+    match: tcp
+    source_port: 51413
+    comment: Allow Torrent traffic
+    ctstate: ESTABLISHED
+    jump: ACCEPT
+  notify:
+    - Persist iptables rules

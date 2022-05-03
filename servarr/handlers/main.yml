@@ -1,0 +1,28 @@
+---
+- name: Start NZBGet
+  ansible.builtin.service:
+    name: nzbget
+    state: started
+
+- name: Start Transmission
+  ansible.builtin.service:
+    name: transmission-daemon
+    state: started
+
+- name: Start Sonarr
+  ansible.builtin.service:
+    name: sonarr
+    state: started
+
+- name: Start Radarr
+  ansible.builtin.service:
+    name: radarr
+    state: started
+
+- name: Save iptables v4 rules
+  ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
+  listen: Persist iptables rules
+
+- name: Save iptables v6 rules
+  ansible.builtin.shell: ip6tables-save > /etc/iptables/rules.v6
+  listen: Persist iptables rules

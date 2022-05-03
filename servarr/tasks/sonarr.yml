@@ -1,0 +1,38 @@
+---
+- name: Check for Sonarr files
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ files_dir }}/sonarr/{{ item }}"
+  register: sf
+  ignore_errors: True
+  with_items:
+    - sonarr.db
+    - sonarr.db-journal
+    - nzbdrone.db
+    - nzbdrone.db-journal
+    - config.xml
+
+- name: Stop Sonarr
+  ansible.builtin.service:
+    name: sonarr
+    state: stopped
+  notify:
+    - Start Sonarr
+  when: item.stat.exists
+  with_items: "{{ tf.results }}"
+  tags:
+    - molecule-idempotence-notest
+
+- name: Restore Sonarr data
+  ansible.builtin.copy:
+    src: "{{ item.stat.path }}"
+    dest: /var/lib/sonarr/
+    backup: yes
+    mode: 0644
+    owner: sonarr
+    group: sonarr
+  ignore_errors: True
+  when: item.stat.exists
+  with_items: "{{ sf.results }}"
+  tags:
+    - molecule-idempotence-notest

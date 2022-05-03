@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/vars.yml
+    - vars/enc_vars.yml
+  handlers:
+    - include: handlers/main.yml
+  roles:
+    - coaxial.base
+    - coaxial.servarr
+  pre_tasks:
+    - include: tasks/users.yml
+    - include: tasks/dirs.yml
+  tasks:
+    - include: tasks/transmission.yml
+    # TODO: backups!
+    # - include_tasks: tasks/backup.yml

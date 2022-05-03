@@ -1,0 +1,30 @@
+---
+- name: Get stats for required dirs
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: st
+  with_items:
+    - "{{ pvr_downloads_dir }}"
+    - "{{ other_downloads_dir }}"
+    - "{{ music_downloads_dir }}"
+    - "{{ torrent_downloads_dir }}"
+    - "{{ nzb_downloads_dir }}"
+
+- name: Assert that required dirs exists
+  ansible.builtin.fail:
+    msg: "dir {{ item.stat }} missing, check VM/container config"
+  when: not item.stat.exists
+  with_items: "{{ st.results }}"
+
+- name: Set correct group for dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    group: media
+    state: directory
+    recurse: yes
+  with_items:
+    - "{{ pvr_downloads_dir }}"
+    - "{{ other_downloads_dir }}"
+    - "{{ music_downloads_dir }}"
+    - "{{ torrent_downloads_dir }}"
+    - "{{ nzb_downloads_dir }}"

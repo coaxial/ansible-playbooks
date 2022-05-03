@@ -1,0 +1,5 @@
+---
+roles:
+  - name: coaxial.base
+    version: v2.0.3
+  - name: coaxial.servarr

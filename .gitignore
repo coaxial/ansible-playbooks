@@ -8,3 +8,9 @@ downloader/files/subtitles.env
 client_files
 .yo-rc.json
 !edms/files/edms.key
+servarr/files/nzbget
+servarr/files/transmission
+servarr/files/sonarr
+servarr/files/radarr
+*.pyc
+__pycache__

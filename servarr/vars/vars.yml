@@ -1,0 +1,10 @@
+---
+pvr_downloads_dir: "{{ enc__pvr_downloads_dir }}"
+other_downloads_dir: "{{ enc__other_downloads_dir }}"
+music_downloads_dir: "{{ enc__music_downloads_dir }}"
+nzb_downloads_dir: "{{ enc__nzb_downloads_dir }}"
+torrent_downloads_dir: "{{ enc__torrent_downloads_dir }}"
+watch_dir: "{{ enc__watch_dir }}"
+servarr_group: media
+# this is so that the tests work. ansible can't find the test files otherwise.
+files_dir: "{{ files_dir_prefix | default(playbook_dir + '/files/') }}"
