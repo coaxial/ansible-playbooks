@@ -14,7 +14,7 @@ Sets up a Servarr instance with:
 Use the GUI to selectively restore parts of the config as per these
 instructions: https://nzbget.net/backup-and-restore-settings
 
-Default password is `nzbget`:`tegbnz6789` and the interface is accessible at
+Default password is `nzbget`:`tegbzn6789` and the interface is accessible at
 `http://<ip>/nzbget`.
 
 ### Transmission

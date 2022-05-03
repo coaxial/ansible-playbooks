@@ -14,5 +14,5 @@
     - include: tasks/dirs.yml
   tasks:
     - include: tasks/transmission.yml
-    - include: tasks/nzbget.yml
+    # TODO: backups!
     # - include_tasks: tasks/backup.yml
