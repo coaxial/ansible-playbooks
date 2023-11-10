@@ -1,0 +1,4 @@
+---
+- name: Mount new fstab entries
+  ansible.builtin.shell:
+    cmd: mount -a

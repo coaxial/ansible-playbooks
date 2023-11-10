@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - include: tasks/qemu-agent.yml
+    - include: tasks/9p-mounts.yml
+    - include: tasks/docker.yml
+    - include: tasks/join-swarm.yml
+    - include: tasks/portainer.yml
+  handlers:
+    - include: handlers/mount.yml

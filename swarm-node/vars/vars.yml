@@ -1,0 +1,4 @@
+---
+swarm_node_join_swarm: true
+swarm_node_remote_ip_addr: "{{ enc_swarm_node_remote_ip_addr }}"
+swarm_node_join_token: "{{ enc_swarm_node_join_token }}"

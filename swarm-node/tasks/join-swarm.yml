@@ -1,0 +1,8 @@
+---
+- name: Join swarm
+  community.docker.docker_swarm:
+    state: join
+    advertise_addr: swarm_node_remote_ip_addr
+    join_token: swarm_node_join_token
+    remote_addrs: ["{{ swarm_node_remote_ip_addr }}"]
+  when: swarm_node_join_swarm
