@@ -1,11 +1,15 @@
 ---
 - hosts: all
   become: true
+  gather_facts: true
+  vars_files:
+    - vars/vars.yml
+    - vars/enc_vars.yml
   tasks:
-    - include: tasks/qemu-agent.yml
-    - include: tasks/9p-mounts.yml
-    - include: tasks/docker.yml
-    - include: tasks/join-swarm.yml
-    - include: tasks/portainer.yml
+    - include_tasks: tasks/qemu-agent.yml
+    - include_tasks: tasks/9p-mounts.yml
+    - include_tasks: tasks/docker.yml
+    - include_tasks: tasks/join-swarm.yml
+    - include_tasks: tasks/portainer.yml
   handlers:
     - include: handlers/mount.yml

@@ -10,7 +10,7 @@ limit_info:
 install_reqs:
 	@echo 'Fetching dependencies...'
 	@if [ -s requirements.yml ]; then \
-		ansible-galaxy install -r requirements.yml --force; \
+		ansible-galaxy install -r requirements.yml; \
 	fi
 
 # ask user for vault pass and save it with mode 0600, unless it's already saved.
@@ -29,8 +29,7 @@ editvars: vars/enc_vars.yml
 	@ansible-vault edit vars/enc_vars.yml --vault-password-file .vault_pass
 
 playbook_run: .vault_pass install_reqs
-	@ansible-playbook --limit $(limit) playbook.yml --vault-password-file .vault_pass $(verbosity)
-	@- rm -f playbook.retry
+	@ansible-playbook --limit $(limit) vm-playbook.yml --vault-password-file .vault_pass $(verbosity)
 
 clean:
 	@-rm -f .vault_pass

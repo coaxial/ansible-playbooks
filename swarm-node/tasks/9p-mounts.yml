@@ -8,5 +8,6 @@
     regexp: /^ct_data.*/
     line: "ct_data /ct_data        9p      trans=virtio,version=9p2000.L,_netdev,msize=104857600   0       0"
     state: present
-    notify:
-      - Mount new fstab entries
+  notify:
+    - create_9p_dir
+    - mount_fstab
