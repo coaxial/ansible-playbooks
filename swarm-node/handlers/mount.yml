@@ -1,0 +1,13 @@
+---
+- name: Create mountpoint dir
+  file:
+    state: directory
+    path: /ct_data
+    owner: root
+    group: root
+  listen: create_9p_dir
+
+- name: Mount new fstab entries
+  ansible.builtin.shell:
+    cmd: mount -a
+  listen: mount_fstab

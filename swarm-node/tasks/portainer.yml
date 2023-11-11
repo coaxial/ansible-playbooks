@@ -1,0 +1,12 @@
+---
+- name: Fetch Portainer BE manifest
+  ansible.builtin.get_url:
+    url: https://downloads.portainer.io/ee2-19/portainer-agent-stack.yml
+    dest: "{{ ansible_env.HOME }}/portainer-agent-stack.yml"
+
+- name: Deploy Portainer BE
+  community.docker.docker_stack:
+    state: present
+    name: portainer-agent
+    compose:
+      - "{{ ansible_env.HOME }}/portainer-agent-stack.yml"

@@ -1,0 +1,22 @@
+---
+- name: Install Python3 dependencies
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-docker
+    - python3-jsondiff
+
+- name: Join swarm
+  community.docker.docker_swarm:
+    state: join
+    advertise_addr: "{{ swarm_node__advertise_addr }}"
+    join_token: "{{ swarm_node__join_token }}"
+    remote_addrs: ["{{ swarm_node__remote_ip_addr }}"]
+  when: swarm_node__join_swarm
+
+- name: Create swarm
+  community.docker.docker_swarm:
+    state: present
+    advertise_addr: "{{ swarm_node__advertise_addr }}"
+  when: not swarm_node__join_swarm
