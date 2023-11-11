@@ -1,4 +1,4 @@
-limit ?= swarm-node
+limit ?= vm_swarm_nodes
 verbosity ?=
 .PHONY: all install_reqs playbook_run clean limit_info editvars
 
