@@ -13,7 +13,6 @@
     advertise_addr: "{{ swarm_node__advertise_addr }}"
     join_token: "{{ swarm_node__join_token }}"
     remote_addrs: ["{{ swarm_node__remote_ip_addr }}"]
-    # docker_host: "{{ swarm_node__docker_host }}"
   when: swarm_node__join_swarm
 
 - name: Create swarm
