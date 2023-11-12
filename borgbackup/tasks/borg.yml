@@ -8,15 +8,33 @@
     - borgmatic
   notify: enable_borgmatic_service
 
+- name: Create dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - /etc/borgmatic.d
+    - /root/.config/borgmatic
+
+- name: Create passphrase file
+  ansible.builtin.copy:
+    dest: /root/.config/borgmatic/passphrase
+    content: "{{ borg_passphrase }}"
+    owner: root
+    group: root
+    mode: 0600
+
 - name: Create config file
   ansible.builtin.template:
     src: config.yaml.j2
     dest: /etc/borgmatic.d/config.yaml
-    state: present
     owner: root
     group: root
     mode: 0600
-    validate: validate-borgmatic-config %s
+    validate: validate-borgmatic-config -c %s
   notify: enable_borgmatic_service
 
 - name: Copy SSH keys
@@ -28,3 +46,11 @@
     mode: 0600
   with_fileglob:
     - "files/ssh/*"
+
+- name: Add repos to known_hosts
+  ansible.builtin.known_hosts:
+    name: "{{ item.name }}"
+    key: "{{ item.key }}"
+    path: /root/.ssh/known_hosts
+    state: present
+  with_items: "{{ borg_repos }}"

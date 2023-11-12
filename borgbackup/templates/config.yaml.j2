@@ -4,8 +4,8 @@ location:
     - /data
 
   repositories:
-    {% for repo in borg_repos }
-    - {{ repo }}
+    {% for repo in borg_repos %}
+    - {{ repo.repo }}
     {% endfor %}
 
   patterns:
@@ -13,7 +13,7 @@ location:
 
 storage:
   compression: zstd,6
-  encryption_passphrase: "{{ borg_passphrase }}"
+  encryption_passcommand: cat /root/.config/borgmatic/passphrase
 
 retention:
   keep_daily: 7
