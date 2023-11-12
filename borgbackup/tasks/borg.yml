@@ -1,0 +1,30 @@
+---
+- name: Install borg and borgmatic
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - borg
+    - borgmatic
+  notify: enable_borgmatic_service
+
+- name: Create config file
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /etc/borgmatic.d/config.yaml
+    state: present
+    owner: root
+    group: root
+    mode: 0600
+    validate: validate-borgmatic-config %s
+  notify: enable_borgmatic_service
+
+- name: Copy SSH keys
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /root/.ssh/
+    owner: root
+    group: root
+    mode: 0600
+  with_fileglob:
+    - "files/ssh/*"

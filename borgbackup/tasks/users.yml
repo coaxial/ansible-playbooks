@@ -1,0 +1,21 @@
+---
+- name: Configure users
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    password: "{{ item.password }}"
+    shell: /bin/bash
+    state: present
+  with_items:
+    - username: ansible
+      password: '!'
+    - username: root
+      password: '!'
+
+- name: Add public keys
+  ansible.builtin.copy:
+    remote_src: /root/.ssh/authorized_keys
+    dest: /home/ansible/.ssh/authorized_keys
+    owner: ansible
+    group: ansible
+    mode: 0600
+
