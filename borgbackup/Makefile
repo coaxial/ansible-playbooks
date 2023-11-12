@@ -1,4 +1,4 @@
-limit ?= vm_swarm_nodes
+limit ?= borgmatic
 verbosity ?=
 .PHONY: all install_reqs playbook_run clean limit_info editvars
 
@@ -29,7 +29,7 @@ editvars: vars/enc_vars.yml
 	@ansible-vault edit vars/enc_vars.yml --vault-password-file .vault_pass
 
 playbook_run: .vault_pass install_reqs
-	@ansible-playbook --limit $(limit) vm-playbook.yml --vault-password-file .vault_pass $(verbosity)
+	@ansible-playbook --limit $(limit) playbook.yml --vault-password-file .vault_pass $(verbosity)
 
 clean:
 	@-rm -f .vault_pass
