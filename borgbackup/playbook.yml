@@ -10,4 +10,5 @@
     - include_tasks: tasks/sshd.yml
     - include_tasks: tasks/borg.yml
   handlers:
+    - include_tasks: handlers/borg.yml
     - include_tasks: handlers/sshd.yml

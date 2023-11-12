@@ -11,9 +11,18 @@
     - username: root
       password: '!'
 
+- name: Create .ssh dir
+  ansible.builtin.file:
+    path: /home/ansible/.ssh
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: 0700
+
 - name: Add public keys
   ansible.builtin.copy:
-    remote_src: /root/.ssh/authorized_keys
+    src: /root/.ssh/authorized_keys
+    remote_src: true
     dest: /home/ansible/.ssh/authorized_keys
     owner: ansible
     group: ansible
