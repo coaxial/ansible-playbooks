@@ -13,5 +13,6 @@
     - include_tasks: tasks/join-swarm.yml
     - include_tasks: tasks/portainer.yml
   handlers:
-    - include_tasks: handlers/mount.yml
-    - include_tasks: handlers/sshd.yml
+    - import_tasks: handlers/qemu-agent.yml
+    - import_tasks: handlers/mount.yml
+    - import_tasks: handlers/sshd.yml
