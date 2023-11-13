@@ -10,10 +10,12 @@ Place SSH keys in `files/ssh`.
 Backup to remote repo:
 ```yaml
 borg_repos:
-  - name: <descriptive repo name>
-    repo: <as per borg repo syntax>
-    key: <host's fingerprint, for ssh> (optional if no ssh)
-    ssh_key: <key file to use for ssh> (optional if no ssh)
+  - name: <descriptive repo name, for borg>
+    repo: <as per borg repo syntax, for borg>
+    ssh:
+      host_name: <server, without `user@`>
+      host_hash: <host's fingerprint, for ssh, get it with `ssh-keyscan -H <hostname>`> (optional if no ssh)
+      key_filename: <key file to use for ssh> (optional if no ssh)
 ```
 
 # Backups

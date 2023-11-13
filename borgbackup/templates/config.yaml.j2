@@ -14,7 +14,7 @@ location:
 storage:
   compression: zstd,6
   encryption_passcommand: cat /root/.config/borgmatic/passphrase
-  ssh_command: ssh -i /root/.ssh/{{ borg_repos[0].ssh_key }}
+  ssh_command: ssh -i /root/.ssh/{{ borg_repos[0].ssh.key_filename }}
 
 retention:
   keep_daily: 7

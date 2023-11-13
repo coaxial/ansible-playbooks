@@ -49,9 +49,9 @@
 
 - name: Add repos to known_hosts
   ansible.builtin.known_hosts:
-    name: "{{ item.name }}"
-    key: "{{ item.key }}"
+    name: "{{ item.ssh.host_name }}"
+    key: "{{ item.ssh.host_hash }}"
     path: /root/.ssh/known_hosts
     state: present
   with_items: "{{ borg_repos }}"
-  when: item.key is defined
+  when: item.ssh.host_hash is defined
