@@ -1,0 +1,6 @@
+---
+- name: Enable borgmatic service
+  listen: enable_borgmatic_service
+  ansible.builtin.service:
+    name: borgmatic
+    state: restarted

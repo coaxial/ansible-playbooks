@@ -1,0 +1,73 @@
+---
+- name: Get stat for local backup repo dirs
+  ansible.builtin.stat:
+    path: "{{ item.repo }}"
+  register: local_backup_paths
+  with_items: "{{ borg_repos }}"
+  when: item.ssh.hostname is not defined
+
+- name: Local backup repo dirs are writeable
+  ansible.builtin.assert:
+    that:
+      - item.stat.writeable
+    fail_msg: "{{ item.stat.path }} is not writeable. Check permissions or UID/GID mapping in LXC container"
+    quiet: true
+  with_items: "{{ local_backup_paths.results }}"
+  when: item.stat is defined
+
+- name: Install borg and borgmatic
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - borgbackup
+    - borgmatic
+  notify: enable_borgmatic_service
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - /etc/borgmatic.d
+    - /root/.config/borgmatic
+
+- name: Create passphrase file
+  ansible.builtin.copy:
+    dest: /root/.config/borgmatic/passphrase
+    content: "{{ borg_passphrase }}"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create config file
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /etc/borgmatic.d/config.yaml
+    owner: root
+    group: root
+    mode: 0600
+    validate: validate-borgmatic-config -c %s
+  notify: enable_borgmatic_service
+
+- name: Copy SSH keys
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /root/.ssh/
+    owner: root
+    group: root
+    mode: 0600
+  with_fileglob:
+    - "files/ssh/*"
+
+- name: Add repos to known_hosts
+  ansible.builtin.known_hosts:
+    name: "{{ item.ssh.hostname }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan -H {{ item.ssh.hostname }} 2>/dev/null') }}"
+    path: /root/.ssh/known_hosts
+    state: present
+  with_items: "{{ borg_repos }}"
+  when: item.ssh.hostname is defined

@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+  gather_facts: true
+  vars_files:
+    - vars/vars.yml
+    - vars/enc_vars.yml
+  tasks:
+    - include_tasks: tasks/users.yml
+    - include_tasks: tasks/sshd.yml
+    - include_tasks: tasks/borg.yml
+  handlers:
+    - import_tasks: handlers/sshd.yml
+    - import_tasks: handlers/borg.yml
