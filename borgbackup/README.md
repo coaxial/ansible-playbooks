@@ -12,10 +12,9 @@ Backup to remote repo:
 borg_repos:
   - name: <descriptive repo name, for borg>
     repo: <as per borg repo syntax, for borg>
-    ssh:
-      host_name: <server, without `user@`>
-      host_hash: <host's fingerprint, for ssh, get it with `ssh-keyscan -H <hostname>`> (optional if no ssh)
-      key_filename: <key file to use for ssh> (optional if no ssh)
+    ssh: # optional if no ssh
+      hostname: <server hostname, without `user@`>
+      key_filename: <key file to use for ssh>
 ```
 
 # Backups
