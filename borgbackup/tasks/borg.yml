@@ -66,7 +66,7 @@
 - name: Add repos to known_hosts
   ansible.builtin.known_hosts:
     name: "{{ item.ssh.hostname }}"
-    key: "{{ lookup('pipe', 'ssh-keyscan -H {{ item.ssh.hostname }}') }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan -H {{ item.ssh.hostname }} 2>/dev/null') }}"
     path: /root/.ssh/known_hosts
     state: present
   with_items: "{{ borg_repos }}"
