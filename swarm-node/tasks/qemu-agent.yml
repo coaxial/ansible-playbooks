@@ -4,3 +4,4 @@
     name: qemu-guest-agent
     cache_valid_time: 3600
     state: present
+  notify: enable_qemu_agent
