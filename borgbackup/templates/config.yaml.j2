@@ -1,7 +1,7 @@
 ---
 location:
   source_directories:
-    - /data
+    - /mnt/ct_data
 
   repositories:
     {% for repo in borg_repos %}
@@ -9,11 +9,12 @@ location:
     {% endfor %}
 
   patterns:
-    - "+ /data/**/backup"
+    - "+ /mnt/ct_data/**/backup"
 
 storage:
   compression: zstd,6
   encryption_passcommand: cat /root/.config/borgmatic/passphrase
+  ssh_command: ssh -i /root/.ssh/{{ borg_repos[0].ssh_key }}
 
 retention:
   keep_daily: 7

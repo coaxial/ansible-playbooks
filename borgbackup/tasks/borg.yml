@@ -54,3 +54,4 @@
     path: /root/.ssh/known_hosts
     state: present
   with_items: "{{ borg_repos }}"
+  when: item.key is defined
