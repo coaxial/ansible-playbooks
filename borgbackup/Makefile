@@ -1,4 +1,4 @@
-limit ?= borgmatic
+limit ?= borgbackup
 verbosity ?=
 .PHONY: all install_reqs playbook_run clean limit_info editvars
 
