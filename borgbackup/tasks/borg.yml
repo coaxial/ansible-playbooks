@@ -32,7 +32,7 @@
     group: root
     mode: 0600
   with_items:
-    - /etc/borgmatic.d
+    - /etc/borgmatic
     - /root/.config/borgmatic
 
 - name: Create passphrase file
@@ -46,7 +46,7 @@
 - name: Create config file
   ansible.builtin.template:
     src: config.yaml.j2
-    dest: /etc/borgmatic.d/config.yaml
+    dest: /etc/borgmatic/config.yaml
     owner: root
     group: root
     mode: 0600
