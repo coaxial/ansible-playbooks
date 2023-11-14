@@ -3,5 +3,5 @@
   listen: enable_borgmatic_service
   ansible.builtin.service:
     name: borgmatic
-    state: restarted
+    state: started
     enabled: true
