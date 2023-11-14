@@ -32,5 +32,5 @@ consistency:
 hooks:
 {% for hook in borgmatic_hooks %}
   {{ hook | to_nice_yaml }}
-{% endfor %}
+{%- endfor -%}
 {% endif %}
