@@ -22,7 +22,7 @@
   with_items:
     - borgbackup
     - borgmatic
-  notify: enable_borgmatic_service
+  notify: enable_borgmatic_timer
 
 - name: Create dirs
   ansible.builtin.file:
@@ -51,7 +51,7 @@
     group: root
     mode: 0600
     validate: validate-borgmatic-config -c %s
-  notify: enable_borgmatic_service
+  notify: enable_borgmatic_timer
 
 - name: Copy SSH keys
   ansible.builtin.copy:

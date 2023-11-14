@@ -1,10 +1,7 @@
 ---
-- name: Enable borgmatic service
-  listen: enable_borgmatic_service
+- name: Enable borgmatic timer
+  listen: enable_borgmatic_timer
   ansible.builtin.service:
-    name: borgmatic
-    # Setting state: started makes it run a full backup every time because the
-    # service type is `oneshot` and it will run `ExecStart` and wait for it to
-    # finish before continuing. This would also make the playbook run take
-    # quite a while.
+    name: borgmatic.timer
+    state: started
     enabled: true
