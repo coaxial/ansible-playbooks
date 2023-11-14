@@ -1,3 +1,4 @@
 ---
 borg_repos: "{{ enc_borg_repos }}"
 borg_passphrase: "{{ enc_borg_passphrase }}"
+borgmatic_hooks: "{{ enc_borgmatic_hooks }}"

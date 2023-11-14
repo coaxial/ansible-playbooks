@@ -25,6 +25,12 @@ The playbook tests for rw access to any local repos. If that assertion fails,
 either remap UID/GID (see https://archive.is/VtPzV) or `chown -R 100000:100000`
 the directory outside the container.
 
+## Notifications
+
+The variable `borgmatic_hooks` contains optional hooks to ping services like Healthchecks and warn if there has been no checkins.
+
+Format as per the value for `hooks:` in the config file, see https://github.com/borgmatic-collective/borgmatic/blob/418ebc8843ef503d45d4d6af4cec62ea21fde001/docs/how-to/monitor-your-backups.md (v1.7.7 because that's what Debian 12 provides.)
+
 ## Backups
 
 ### Create repos
