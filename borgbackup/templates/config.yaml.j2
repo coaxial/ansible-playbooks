@@ -27,3 +27,8 @@ consistency:
     - repository
     - archives
   check_last: 3
+
+hooks:
+{% for hook in borgmatic_hooks %}
+  {{ hook | to_nice_yaml }}
+{% endfor %}
