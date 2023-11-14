@@ -28,7 +28,9 @@ consistency:
     - archives
   check_last: 3
 
+{% if borgmatic_hooks is defined %}
 hooks:
-{% for hook in borgmatic_hooks %}
-  {{ hook | to_nice_yaml }}
-{% endfor %}
+  {% for hook in borgmatic_hooks %}
+    {{ hook | to_nice_yaml }}
+  {% endfor %}
+{% endif %}
