@@ -4,3 +4,4 @@
   ansible.builtin.service:
     name: borgmatic
     state: restarted
+    enabled: true
