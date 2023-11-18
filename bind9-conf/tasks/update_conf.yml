@@ -1,0 +1,28 @@
+---
+- name: Create dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - "{{ bind9_conf_dir_path }}"
+    - "{{ bind9_conf_dir_path }}/zones"
+
+- name: Populate config files
+  ansible.builtin.template:
+    src: templates/named.conf.j2
+    dest: "{{ bind9_conf_dir_path }}/named.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Populate zonefiles
+  ansible.builtin.template:
+    src: "templates/{{ item.template }}"
+    dest: "{{ bind9_conf_dir_path }}/zones/{{ item.filename }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ bind9_zones }}"

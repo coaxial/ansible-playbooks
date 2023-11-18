@@ -1,0 +1,6 @@
+---
+bind9_acls: "{{ enc_bind9_acls }}"
+bind9_forwarders: "{{ enc_bind9_forwarders }}"
+bind9_conf_dir_path: "{{ enc_bind9_conf_dir_path }}"
+bind9_zones: "{{ enc_bind9_zones }}"
+bind9_user: "{{ enc_bind9_user }}"

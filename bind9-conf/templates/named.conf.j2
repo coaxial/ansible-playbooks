@@ -1,0 +1,26 @@
+acl internal {
+{% for acl in bind9_acls %}
+  {{ acl }};
+{% endfor %}
+};
+
+options {
+  directory "/var/cache/bind";
+
+  recursion yes;
+
+  forwarders {
+{% for forwarder in bind9_forwarders %}
+    {{ forwarder }};
+{% endfor %}
+  };
+  allow-query { internal; };
+  allow-recursion { internal; };
+};
+
+{% for zone in bind9_zones %}
+zone "{{ zone.name }}" IN {
+  type master;
+  file "/etc/bind/zones/{{ zone.filename }}";
+};
+{% endfor %}
