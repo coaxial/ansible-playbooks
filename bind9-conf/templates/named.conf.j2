@@ -14,8 +14,8 @@ options {
     {{ forwarder }};
 {% endfor %}
   };
-  allow-query { any; };
-  allow-recursion { any; };
+  allow-query { internal; };
+  allow-recursion { internal; };
 };
 
 {% for zone in bind9_zones %}
