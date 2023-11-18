@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+  gather_facts: true
+  vars_files:
+    - vars/vars.yml
+    - vars/enc_vars.yml
+  tasks:
+    - include_tasks: tasks/update_conf.yml

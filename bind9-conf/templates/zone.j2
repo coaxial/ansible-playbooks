@@ -1,0 +1,16 @@
+$TTL 5m
+
+$ORIGIN {{ item.name }}.
+
+@                       IN        SOA       ns.{{ item.name }}. {{ item.email }}. (
+                                            {{ ansible_date_time.epoch }}   ; serial number
+                                            12h                             ; refresh
+                                            15m                             ; retry
+                                            3w                              ; expire
+                                            5m                              ; minimum TTL
+                                            )
+                        IN        NS        ns.{{ item.name }}.
+ns                      IN        A         {{ item.ip }}
+{% for record in item.records %}
+{{ record.name }}       IN        {{ record.type }}        {{ record.ip }}
+{% endfor %}
