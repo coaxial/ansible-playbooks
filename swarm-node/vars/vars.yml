@@ -4,3 +4,4 @@ swarm_node__remote_ip_addr: "{{ enc_swarm_node__remote_ip_addr }}"
 swarm_node__join_token: "{{ enc_swarm_node__join_token }}"
 swarm_node__docker_host: "{{ enc_swarm_node__docker_host }}"
 swarm_node__advertise_addr: "eth0:23777"
+swarm_node__regulatorydb_url: https://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git/plain/

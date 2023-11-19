@@ -6,7 +6,7 @@
   ansible.builtin.lineinfile:
     path: /etc/fstab
     regexp: "^ct_data.*"
-    line: "ct_data /ct_data        9p      trans=virtio,version=9p2000.L,_netdev,msize=104857600   0       0"
+    line: "ct_data /ct_data        9p      trans=virtio,version=9p2000.L,msize=104857600   0       0"
     state: present
   notify:
     - create_9p_dir
