@@ -8,7 +8,6 @@
   tasks:
     - include_tasks: tasks/qemu-agent.yml
     - include_tasks: tasks/9p-mounts.yml
-    - include_tasks: tasks/regdb.yml
     - include_tasks: tasks/sshd.yml
     - include_tasks: tasks/docker.yml
     - include_tasks: tasks/join-swarm.yml
