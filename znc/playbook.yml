@@ -73,9 +73,10 @@
     - name: Open port
       iptables:
         chain: INPUT
-        destination_port: "{{ znc__port }}"
+        destination_port: "{{ item }}"
         protocol: tcp
         jump: ACCEPT
         comment: Allow ZNC traffic
+      with_items: "{{ znc__ports }}"
   handlers:
     - include: handlers/znc.yml
