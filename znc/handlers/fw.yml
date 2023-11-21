@@ -1,0 +1,11 @@
+---
+- name: Save iptables v4 rules
+  ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
+  register: save
+  changed_when: false
+  listen: persist_fw_rules
+
+- name: Save iptables v6 rules
+  ansible.builtin.shell: ip6tables-save > /etc/iptables/rules.v6
+  changed_when: false
+  listen: persist_fw_rules

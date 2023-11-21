@@ -78,5 +78,7 @@
         jump: ACCEPT
         comment: Allow ZNC traffic
       with_items: "{{ znc__ports }}"
+      notify: persist_fw_rules
   handlers:
     - include: handlers/znc.yml
+    - include: handlers/fw.yml
