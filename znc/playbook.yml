@@ -70,7 +70,7 @@
         - networks
       when: item.1.clientcert is defined
 
-    - name: Open port
+    - name: Open ports
       iptables:
         chain: INPUT
         destination_port: "{{ item }}"
