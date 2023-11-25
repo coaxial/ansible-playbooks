@@ -5,3 +5,8 @@
     name: borgmatic.timer
     state: started
     enabled: true
+
+- name: Reload systemctl
+  listen: reload_systemctl
+  ansible.builtin.systemd_service:
+    daemon_reload: true
