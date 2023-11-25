@@ -71,3 +71,11 @@
     state: present
   with_items: "{{ borg_repos }}"
   when: item.ssh.hostname is defined
+
+- name: Make backups run daily at the same time
+  ansible.builtin.copy:
+    src: files/borgmatic.timer
+    dest: /lib/systemd/system/borgmatic.timer
+    owner: root
+    group: root
+    mode: 0644
