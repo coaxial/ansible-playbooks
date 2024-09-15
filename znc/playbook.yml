@@ -70,12 +70,15 @@
         - networks
       when: item.1.clientcert is defined
 
-    - name: Open port
+    - name: Open ports
       iptables:
         chain: INPUT
-        destination_port: "{{ znc__port }}"
+        destination_port: "{{ item }}"
         protocol: tcp
         jump: ACCEPT
         comment: Allow ZNC traffic
+      with_items: "{{ znc__ports }}"
+      notify: persist_fw_rules
   handlers:
     - include: handlers/znc.yml
+    - include: handlers/fw.yml
