@@ -1,9 +1,12 @@
 ---
-- hosts: all
+- hosts: mjolnir
   become: true
   gather_facts: true
   vars_files:
     - vars/vars.yml
-
+  handlers:
+    - ansible.builtin.import_tasks: handlers/main.yml
   roles:
     - coaxial.base
+  tasks:
+    - ansible.builtin.import_tasks: tasks/docker.yml
